@@ -67,6 +67,7 @@ always @(posedge clk or negedge reset_n)
         if (1) //!check_neof(0)) //1)
         begin
           status = $fscanf(fh, "%x %x %x", write_not_read, address, data);
+          $display("a = %x", write_not_read);
           csr_write <= 1'b0;
           csr_read  <= 1'b0;
           if (write_not_read == 2)
