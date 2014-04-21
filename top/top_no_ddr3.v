@@ -1,6 +1,7 @@
 module top_no_ddr3 (
 
   input                    clk,
+  input                    ddr3_clk,
   input                    reset_n,
 
   output          [7:0]    vga_r,

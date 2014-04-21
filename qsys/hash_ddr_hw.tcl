@@ -19,13 +19,13 @@ package require -exact qsys 13.0
 # module AUDIO_IF
 # 
 set_module_property DESCRIPTION ""
-set_module_property NAME hash_no_ddr3
+set_module_property NAME top_no_ddr3
 set_module_property VERSION 1.0
 set_module_property INTERNAL false
 set_module_property OPAQUE_ADDRESS_MAP true
 set_module_property GROUP "Terasic Technologies Inc./SoCKit"
 set_module_property AUTHOR ""
-set_module_property DISPLAY_NAME hash_no_ddr3
+set_module_property DISPLAY_NAME top_no_ddr3
 set_module_property INSTANTIATE_IN_SYSTEM_MODULE true
 set_module_property EDITABLE true
 set_module_property ANALYZE_HDL AUTO
@@ -33,20 +33,20 @@ set_module_property REPORT_TO_TALKBACK false
 set_module_property ALLOW_GREYBOX_GENERATION false
 
 add_fileset quartus_synth QUARTUS_SYNTH "" "Quartus Synthesis"
-set_fileset_property quartus_synth TOP_LEVEL hash_no_ddr3
-add_fileset_file hash_no_ddr3.v VERILOG PATH hash_no_ddr3.v TOP_LEVEL_FILE
-add_fileset_file hash_top.v VERILOG PATH hash_top.v 
-add_fileset_file write_to_ddr3.v VERILOG PATH write_to_ddr3.v
-add_fileset_file read_from_ddr3.v VERILOG PATH read_from_ddr3.v
-add_fileset_file sha-256-functions.v VERILOG PATH sha-256-functions.v
-add_fileset_file sha256_top.v VERILOG PATH sha256_top.v
-add_fileset_file salsa.v VERILOG PATH salsa.v
-add_fileset_file async_fifo.sv VERILOG PATH async_fifo2/async_fifo.v
-add_fileset_file sha256_digester.v VERILOG PATH sha256_digester.v
-add_fileset_file salsa_core.v VERILOG PATH salsa_core.v
-add_fileset_file async_fifo_no_sa.v VERILOG PATH async_fifo2/async_fifo_no_sa.v
-add_fileset_file async_fifo_memory.v VERILOG PATH async_fifo2/async_fifo_memory.v
-add_fileset_file async_fifo_calc.v VERILOG PATH async_fifo2/async_fifo_calc.v
+set_fileset_property quartus_synth TOP_LEVEL top_no_ddr3
+add_fileset_file top_no_ddr3.v         VERILOG PATH ../top/top_no_ddr3.v
+add_fileset_file vga_control.v         VERILOG PATH ../vga_control/vga_control.v
+add_fileset_file vga_hsync.v           VERILOG PATH ../vga_control/vga_hsync.v
+add_fileset_file vga_sync.v            VERILOG PATH ../vga_control/vga_sync.v
+add_fileset_file vga_vsync.v           VERILOG PATH ../vga_control/vga_vsync.v
+add_fileset_file read_from_ddr3.v      VERILOG PATH ../ddr3_control/read_from_ddr3.v
+add_fileset_file ddr3_top.v            VERILOG PATH ../ddr3_control/ddr3_top.v
+add_fileset_file ddr3_regs.v           VERILOG PATH ../ddr3_control/ddr3_regs.v
+add_fileset_file async_fifo_no_sa.v    VERILOG PATH ../common/async_fifo_no_sa.v
+add_fileset_file async_fifo_memory.v   VERILOG PATH ../common/async_fifo_memory.v
+add_fileset_file async_fifo_calc.v     VERILOG PATH ../common/async_fifo_calc.v
+add_fileset_file async_handshake.v     VERILOG PATH ../common/async_handshake.v
+add_fileset_file reset_sync.v          VERILOG PATH ../common/reset_sync.v
 
 add_interface clk clock sink
 set_interface_property clk clockRate 0
@@ -133,5 +133,69 @@ set_interface_assignment ddr3_memory_con embeddedsw.configuration.isFlash 0
 set_interface_assignment ddr3_memory_con embeddedsw.configuration.isMemoryDevice 0
 set_interface_assignment ddr3_memory_con embeddedsw.configuration.isNonVolatileStorage 0
 set_interface_assignment ddr3_memory_con embeddedsw.configuration.isPrintableDevice 0
+
+add_interface vga_r conduit end
+set_interface_property vga_r associatedClock ""
+set_interface_property vga_r associatedReset ""
+set_interface_property vga_r ENABLED true
+add_interface_port vga_r export Output 8
+
+add_interface vga_g conduit end
+set_interface_property vga_g associatedClock ""
+set_interface_property vga_g associatedReset ""
+set_interface_property vga_g ENABLED true
+add_interface_port vga_g export Output 8
+
+add_interface vga_b conduit end
+set_interface_property vga_b associatedClock ""
+set_interface_property vga_b associatedReset ""
+set_interface_property vga_b ENABLED true
+add_interface_port vga_b export Output 8
+
+add_interface vga_hs conduit end
+set_interface_property vga_hs associatedClock ""
+set_interface_property vga_hs associatedReset ""
+set_interface_property vga_hs ENABLED true
+add_interface_port vga_hs export Output 1
+
+add_interface vga_vs conduit end
+set_interface_property vga_vs associatedClock ""
+set_interface_property vga_vs associatedReset ""
+set_interface_property vga_vs ENABLED true
+add_interface_port vga_vs export Output 1
+
+add_interface vga_blank_n conduit end
+set_interface_property vga_blank_n associatedClock ""
+set_interface_property vga_blank_n associatedReset ""
+set_interface_property vga_blank_n ENABLED true
+add_interface_port vga_blank_n export Output 1
+
+add_interface vga_sync_n conduit end
+set_interface_property vga_sync_n associatedClock ""
+set_interface_property vga_sync_n associatedReset ""
+set_interface_property vga_sync_n ENABLED true
+add_interface_port vga_sync_n export Output 1
+
+add_interface vga_clk conduit end
+set_interface_property vga_clk associatedClock ""
+set_interface_property vga_clk associatedReset ""
+set_interface_property vga_clk ENABLED true
+add_interface_port vga_clk export Output 1
+
+add_interface test_pat conduit start
+set_interface_property test_pat associatedClock ""
+set_interface_property test_pat associatedReset ""
+set_interface_property test_pat ENABLED true
+add_interface_port test_pat export Input 1
+
+
+
+
+
+
+
+
+
+
 
 
