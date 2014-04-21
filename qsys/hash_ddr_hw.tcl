@@ -138,55 +138,55 @@ add_interface vga_r conduit end
 set_interface_property vga_r associatedClock ""
 set_interface_property vga_r associatedReset ""
 set_interface_property vga_r ENABLED true
-add_interface_port vga_r export Output 8
+add_interface_port vga_r vga_r export Output 8
 
 add_interface vga_g conduit end
 set_interface_property vga_g associatedClock ""
 set_interface_property vga_g associatedReset ""
 set_interface_property vga_g ENABLED true
-add_interface_port vga_g export Output 8
+add_interface_port vga_g vga_g export Output 8
 
 add_interface vga_b conduit end
 set_interface_property vga_b associatedClock ""
 set_interface_property vga_b associatedReset ""
 set_interface_property vga_b ENABLED true
-add_interface_port vga_b export Output 8
+add_interface_port vga_b vga_b export Output 8
 
 add_interface vga_hs conduit end
 set_interface_property vga_hs associatedClock ""
 set_interface_property vga_hs associatedReset ""
 set_interface_property vga_hs ENABLED true
-add_interface_port vga_hs export Output 1
+add_interface_port vga_hs vga_hs export Output 1
 
 add_interface vga_vs conduit end
 set_interface_property vga_vs associatedClock ""
 set_interface_property vga_vs associatedReset ""
 set_interface_property vga_vs ENABLED true
-add_interface_port vga_vs export Output 1
+add_interface_port vga_vs vga_vs export Output 1
 
 add_interface vga_blank_n conduit end
 set_interface_property vga_blank_n associatedClock ""
 set_interface_property vga_blank_n associatedReset ""
 set_interface_property vga_blank_n ENABLED true
-add_interface_port vga_blank_n export Output 1
+add_interface_port vga_blank_n vga_blank_n export Output 1
 
 add_interface vga_sync_n conduit end
 set_interface_property vga_sync_n associatedClock ""
 set_interface_property vga_sync_n associatedReset ""
 set_interface_property vga_sync_n ENABLED true
-add_interface_port vga_sync_n export Output 1
+add_interface_port vga_sync_n vga_sync_n export Output 1
 
 add_interface vga_clk conduit end
 set_interface_property vga_clk associatedClock ""
 set_interface_property vga_clk associatedReset ""
 set_interface_property vga_clk ENABLED true
-add_interface_port vga_clk export Output 1
+add_interface_port vga_clk vga_clk export Output 1
 
 add_interface test_pat conduit start
 set_interface_property test_pat associatedClock ""
 set_interface_property test_pat associatedReset ""
 set_interface_property test_pat ENABLED true
-add_interface_port test_pat export Input 1
+add_interface_port test_pat test_pat export Input 1
 
 
 
