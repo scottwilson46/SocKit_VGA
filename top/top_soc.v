@@ -1,6 +1,7 @@
 module top_soc (
 
   input                    clk_bot1,     // 100MHz
+  input                    clk_50,
 
   output          [14:0]   DDR3_A,
   output          [2:0]    DDR3_BA,
@@ -71,8 +72,10 @@ wire hps_fpga_reset_n;
 
 top_qsys i_qsys (
 
-  .clk_clk                              (clk_bot1),
+  .clk_clk                              (clk_50),
+  .clk_100_clk                          (clk_bot1),
   .reset_reset_n                        (hps_fpga_reset_n),
+  .reset_100_reset_n                    (hps_fpga_reset_n),
 
   .memory_0_mem_a                       (DDR3_A),      
   .memory_0_mem_ba                      (DDR3_BA),     

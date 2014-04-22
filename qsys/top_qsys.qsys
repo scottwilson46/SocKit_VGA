@@ -12,6 +12,14 @@
    element $${FILENAME}
    {
    }
+   element clk_100
+   {
+      datum _sortIndex
+      {
+         value = "1";
+         type = "int";
+      }
+   }
    element clk_50
    {
       datum _sortIndex
@@ -24,7 +32,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "4";
          type = "int";
       }
    }
@@ -32,7 +40,7 @@
    {
       datum _sortIndex
       {
-         value = "1";
+         value = "2";
          type = "int";
       }
    }
@@ -40,7 +48,7 @@
    {
       datum _sortIndex
       {
-         value = "2";
+         value = "3";
          type = "int";
       }
    }
@@ -134,6 +142,12 @@
    name="top_no_ddr3_0_test_pat"
    internal="top_no_ddr3_0.test_pat"
    type="conduit"
+   dir="end" />
+ <interface name="clk_100" internal="clk_100.clk_in" type="clock" dir="end" />
+ <interface
+   name="reset_100"
+   internal="clk_100.clk_in_reset"
+   type="reset"
    dir="end" />
  <module kind="clock_source" version="13.1" enabled="1" name="clk_50">
   <parameter name="clockFrequency" value="50000000" />
@@ -916,21 +930,12 @@
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DDR3_CLK_CLOCK_RATE" value="150000000" />
  </module>
- <connection
-   kind="reset"
-   version="13.1"
-   start="clk_50.clk_reset"
-   end="mem_if_ddr3_emif_fpga.soft_reset" />
- <connection
-   kind="clock"
-   version="13.1"
-   start="clk_50.clk"
-   end="mem_if_ddr3_emif_fpga.pll_ref_clk" />
- <connection
-   kind="reset"
-   version="13.1"
-   start="clk_50.clk_reset"
-   end="mem_if_ddr3_emif_fpga.global_reset" />
+ <module kind="clock_source" version="13.1" enabled="1" name="clk_100">
+  <parameter name="clockFrequency" value="100000000" />
+  <parameter name="clockFrequencyKnown" value="true" />
+  <parameter name="inputClockFrequency" value="0" />
+  <parameter name="resetSynchronousEdges" value="NONE" />
+ </module>
  <connection
    kind="clock"
    version="13.1"
@@ -969,6 +974,21 @@
    version="13.1"
    start="mem_if_ddr3_emif_fpga.afi_clk"
    end="top_no_ddr3_0.ddr3_clk" />
+ <connection
+   kind="clock"
+   version="13.1"
+   start="clk_100.clk"
+   end="mem_if_ddr3_emif_fpga.pll_ref_clk" />
+ <connection
+   kind="reset"
+   version="13.1"
+   start="clk_100.clk_reset"
+   end="mem_if_ddr3_emif_fpga.global_reset" />
+ <connection
+   kind="reset"
+   version="13.1"
+   start="clk_100.clk_reset"
+   end="mem_if_ddr3_emif_fpga.soft_reset" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
 </system>
