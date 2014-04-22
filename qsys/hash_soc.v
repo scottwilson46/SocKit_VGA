@@ -100,7 +100,16 @@ hash_qsys2 i_qsys (
   .memory_mem_odt    (HSP_DDR3_ODT),    
   .memory_oct_rzqin  (HSP_DDR3_RZQ),
 
-  .hps_0_h2f_reset_reset_n (hps_fpga_reset_n)
-);
+  .hps_0_h2f_reset_reset_n (hps_fpga_reset_n),
+
+  .top_no_ddr3_0_vga_r_export (vga_r),
+  .top_no_ddr3_0_vga_g_export (vga_g),
+  .top_no_ddr3_0_vga_b_export (vga_b),
+  .top_no_ddr3_0_vga_hs_export (vga_hs),
+  .top_no_ddr3_0_vga_vs_export (vga_vs),
+  .top_no_ddr3_0_vga_blank_n_export (vga_blank_n),
+  .top_no_ddr3_0_vga_sync_n_export  (vga_sync_n),
+  .top_no_ddr3_0_vga_clk_export     (vga_clk),
+  .top_no_ddr3_0_test_pat_export    (1'b0));
 
 endmodule
