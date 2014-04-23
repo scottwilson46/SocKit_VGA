@@ -21,6 +21,7 @@ module top_no_ddr3 (
   output          [2:0]    ddr3_avl_size,
   output                   ddr3_avl_read_req,
   output         [25:0]    ddr3_avl_addr,
+  
   input                    ddr3_avl_read_data_valid,
   input         [127:0]    ddr3_avl_read_data,
 

@@ -39,9 +39,12 @@ add_fileset_file vga_control.v         VERILOG PATH ../vga_control/vga_control.v
 add_fileset_file vga_hsync.v           VERILOG PATH ../vga_control/vga_hsync.v
 add_fileset_file vga_sync.v            VERILOG PATH ../vga_control/vga_sync.v
 add_fileset_file vga_vsync.v           VERILOG PATH ../vga_control/vga_vsync.v
+add_fileset_file altera_pll_vga.v      VERILOG PATH ../vga_control/altera_pll_vga.v
+add_fileset_file altera_pll_vga_0002.v VERILOG PATH ../vga_control/altera_pll_vga_0002.v
 add_fileset_file read_from_ddr3.v      VERILOG PATH ../ddr3_control/read_from_ddr3.v
 add_fileset_file ddr3_top.v            VERILOG PATH ../ddr3_control/ddr3_top.v
 add_fileset_file ddr3_regs.v           VERILOG PATH ../ddr3_control/ddr3_regs.v
+add_fileset_file async_fifo.v          VERILOG PATH ../common/async_fifo.v
 add_fileset_file async_fifo_no_sa.v    VERILOG PATH ../common/async_fifo_no_sa.v
 add_fileset_file async_fifo_memory.v   VERILOG PATH ../common/async_fifo_memory.v
 add_fileset_file async_fifo_calc.v     VERILOG PATH ../common/async_fifo_calc.v
@@ -87,7 +90,7 @@ set_interface_property avalon_slave EXPORT_OF ""
 set_interface_property avalon_slave PORT_NAME_MAP ""
 set_interface_property avalon_slave SVD_ADDRESS_GROUP ""
 
-add_interface_port avalon_slave csr_address  address Input 3
+add_interface_port avalon_slave csr_addr  address Input 3
 add_interface_port avalon_slave csr_read     read Input 1
 add_interface_port avalon_slave csr_rd_data  readdata Output 16
 add_interface_port avalon_slave csr_write    write Input 1
@@ -120,15 +123,13 @@ set_interface_property ddr3_memory_con EXPORT_OF ""
 set_interface_property ddr3_memory_con PORT_NAME_MAP ""
 set_interface_property ddr3_memory_con SVD_ADDRESS_GROUP ""
 
-add_interface_port ddr3_memory_con fpga_ddr3_avl_addr         address             Output 26
-add_interface_port ddr3_memory_con fpga_ddr3_avl_read_req     read                Output 1
-add_interface_port ddr3_memory_con fpga_ddr3_avl_rdata        readdata            Input  128
-add_interface_port ddr3_memory_con fpga_ddr3_avl_rdata_valid  readdatavalid       Input  1
-add_interface_port ddr3_memory_con fpga_ddr3_avl_wdata        writedata           Output 128
-add_interface_port ddr3_memory_con fpga_ddr3_avl_write_req    write               Output 1
-add_interface_port ddr3_memory_con fpga_ddr3_avl_size         burstcount          Output 3
-add_interface_port ddr3_memory_con fpga_ddr3_avl_burstbegin   beginbursttransfer  Output 1
-add_interface_port ddr3_memory_con fpga_ddr3_avl_ready        waitrequest_n       Input 1
+add_interface_port ddr3_memory_con ddr3_avl_addr             address             Output 26
+add_interface_port ddr3_memory_con ddr3_avl_read_req         read                Output 1
+add_interface_port ddr3_memory_con ddr3_avl_read_data        readdata            Input  128
+add_interface_port ddr3_memory_con ddr3_avl_read_data_valid  readdatavalid       Input  1
+add_interface_port ddr3_memory_con ddr3_avl_size             burstcount          Output 3
+add_interface_port ddr3_memory_con ddr3_avl_burstbegin       beginbursttransfer  Output 1
+add_interface_port ddr3_memory_con ddr3_avl_ready            waitrequest_n       Input 1
 set_interface_assignment ddr3_memory_con embeddedsw.configuration.isFlash 0
 set_interface_assignment ddr3_memory_con embeddedsw.configuration.isMemoryDevice 0
 set_interface_assignment ddr3_memory_con embeddedsw.configuration.isNonVolatileStorage 0
