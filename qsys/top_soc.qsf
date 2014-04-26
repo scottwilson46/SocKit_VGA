@@ -10,7 +10,7 @@ set_global_assignment -name ORIGINAL_QUARTUS_VERSION 12
 set_global_assignment -name LAST_QUARTUS_VERSION 13.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "WED FEB  6 14:33:30 2013"
 
-set_global_assignment -name QIP_FILE top_qsys/synthesis/top_qsys.qip
+set_global_assignment -name QIP_FILE top_qsys2/synthesis/top_qsys2.qip
 set_global_assignment -name VERILOG_FILE ../top/top_soc.v
 #============================================================
 # DDR3
