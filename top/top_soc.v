@@ -3,23 +3,6 @@ module top_soc (
   input                    clk_bot1,     // 100MHz
   input                    OSC_50_B3B,
 
-  output          [14:0]   DDR3_A,
-  output          [2:0]    DDR3_BA,
-  output                   DDR3_CAS_n,
-  output                   DDR3_CKE,
-  output                   DDR3_CK_n,
-  output                   DDR3_CK,
-  output                   DDR3_CS_n,
-  output          [3:0]    DDR3_DM,
-  inout           [31:0]   DDR3_DQ,
-  inout           [3:0]    DDR3_DQS_n,
-  inout           [3:0]    DDR3_DQS,
-  output                   DDR3_ODT,
-  output                   DDR3_RAS_n,
-  output                   DDR3_RESET_n,
-  input                    DDR3_RZQ,
-  output                   DDR3_WE_n,
-
   inout                    hps_0_hps_io_hps_io_gpio_inst_GPIO09,
   inout                    hps_0_hps_io_hps_io_gpio_inst_GPIO35,
   inout                    hps_0_hps_io_hps_io_gpio_inst_GPIO48,
@@ -56,9 +39,14 @@ module top_soc (
   output                   vga_hs,
   output                   vga_vs,
   output                   vga_blank_n,
-  output                   vga_sync_n);
+  output                   vga_sync_n,
+  
+  output          [3:0]    LED
+);
 
 wire hps_fpga_reset_n;
+wire [31:0] test_regs;
+assign LED = test_regs[3:0];
 
 top_qsys i_qsys (
 
@@ -66,23 +54,6 @@ top_qsys i_qsys (
   .clk_100_clk                          (clk_bot1),
   .reset_reset_n                        (hps_fpga_reset_n),
   .reset_100_reset_n                    (hps_fpga_reset_n),
-
-  .memory_0_mem_a                       (DDR3_A),      
-  .memory_0_mem_ba                      (DDR3_BA),     
-  .memory_0_mem_ck                      (DDR3_CK),     
-  .memory_0_mem_ck_n                    (DDR3_CK_n),   
-  .memory_0_mem_cke                     (DDR3_CKE),    
-  .memory_0_mem_cs_n                    (DDR3_CS_n),   
-  .memory_0_mem_dm                      (DDR3_DM),     
-  .memory_0_mem_ras_n                   (DDR3_RAS_n),  
-  .memory_0_mem_cas_n                   (DDR3_CAS_n),  
-  .memory_0_mem_we_n                    (DDR3_WE_n),   
-  .memory_0_mem_reset_n                 (DDR3_RESET_n),
-  .memory_0_mem_dq                      (DDR3_DQ),     
-  .memory_0_mem_dqs                     (DDR3_DQS),    
-  .memory_0_mem_dqs_n                   (DDR3_DQS_n),  
-  .memory_0_mem_odt                     (DDR3_ODT),    
-  .oct_rzqin                            (DDR3_RZQ),
 
   .hps_0_hps_io_hps_io_gpio_inst_GPIO09 (hps_0_hps_io_hps_io_gpio_inst_GPIO09),
   .hps_0_hps_io_hps_io_gpio_inst_GPIO35 (hps_0_hps_io_hps_io_gpio_inst_GPIO35),
@@ -121,7 +92,9 @@ top_qsys i_qsys (
   .top_no_ddr3_0_vga_vs_export          (vga_vs),
   .top_no_ddr3_0_vga_blank_n_export     (vga_blank_n),
   .top_no_ddr3_0_vga_sync_n_export      (vga_sync_n),
-  .top_no_ddr3_0_vga_clk_export         (vga_clk));
+  .top_no_ddr3_0_vga_clk_export         (vga_clk),
+
+  .top_no_ddr3_0_test_regs_export       (test_regs));
 
 endmodule
 

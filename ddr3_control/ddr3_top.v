@@ -22,7 +22,9 @@ module ddr3_top #(parameter IMAGE_WIDTH = 1280,
 
   output                   data_fifo_empty,
   output        [127:0]    data_fifo_rd_data,
-  input                    vga_rd_valid
+  input                    vga_rd_valid,
+
+  output         [31:0]    test_regs
 
 );
 
@@ -87,6 +89,8 @@ ddr3_regs i_ddr3_regs (
 
   .ddr3_buffer0_offset    (ddr3_buffer0_offset),
   .ddr3_buffer1_offset    (ddr3_buffer1_offset),
+
+  .test_regs              (test_regs),
 
   .clear_buffer0          (clear_buffer0),
   .clear_buffer1          (clear_buffer1));

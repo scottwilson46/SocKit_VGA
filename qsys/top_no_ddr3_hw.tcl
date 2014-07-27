@@ -123,7 +123,7 @@ set_interface_property ddr3_memory_con EXPORT_OF ""
 set_interface_property ddr3_memory_con PORT_NAME_MAP ""
 set_interface_property ddr3_memory_con SVD_ADDRESS_GROUP ""
 
-add_interface_port ddr3_memory_con ddr3_avl_addr             address             Output 26
+add_interface_port ddr3_memory_con ddr3_avl_addr             address             Output 32
 add_interface_port ddr3_memory_con ddr3_avl_read_req         read                Output 1
 add_interface_port ddr3_memory_con ddr3_avl_read_data        readdata            Input  128
 add_interface_port ddr3_memory_con ddr3_avl_read_data_valid  readdatavalid       Input  1
@@ -188,6 +188,12 @@ set_interface_property test_pat associatedClock ""
 set_interface_property test_pat associatedReset ""
 set_interface_property test_pat ENABLED true
 add_interface_port test_pat test_pat export Input 1
+
+add_interface test_regs conduit end
+set_interface_property test_regs associatedClock ""
+set_interface_property test_regs associatedReset ""
+set_interface_property test_regs ENABLED true
+add_interface_port test_regs test_regs export Output 32
 
 
 

@@ -13,7 +13,7 @@ module async_fifo_calc #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
   output reg [fifo_ptr_size:0]            ptr_gray,
   output reg                              fifo_full,
   output reg                              fifo_empty,
-  output reg                              fifo_almost_full);
+  output reg                              fifo_depth_of);
 
   wire [fifo_ptr_size:0] next_fifo_counter;
   reg  [fifo_ptr_size:0] fifo_counter;
@@ -66,8 +66,6 @@ module async_fifo_calc #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
                               (fifo_counter[fifo_ptr_size-1:0] - 
                                other_ptr_bin_reg[fifo_ptr_size-1:0]);
 
-  assign next_fifo_almost_full = fifo_depth_of > 'd800;
-
   always @(posedge clk or posedge reset)
     if (reset) 
     begin
@@ -79,7 +77,6 @@ module async_fifo_calc #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
       fifo_full              <= 1'b0; 
       fifo_empty             <= 1'b1;
       fifo_depth_of          <= 'd0;
-      fifo_almost_full       <= 1'b0;
     end
     else
     begin
@@ -91,7 +88,6 @@ module async_fifo_calc #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
       fifo_full              <= next_fifo_full; 
       fifo_empty             <= next_fifo_empty;
       fifo_depth_of          <= next_fifo_depth_of;
-      fifo_almost_full       <= next_fifo_almost_full;
     end
 
 endmodule

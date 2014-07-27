@@ -14,7 +14,7 @@ module async_fifo_no_sa #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
   // FIFO Output Signals:
   output                          fifo_full,
   output                          fifo_empty,
-  output                          fifo_almost_full,
+  output     [fifo_ptr_size:0]    fifo_depth,
   output     [fifo_data_size-1:0] rd_data);
 
   wire [fifo_ptr_size-1:0] rd_mem_addr;
@@ -46,7 +46,7 @@ module async_fifo_no_sa #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
     .ptr_gray          (wr_ptr_gray),
     .fifo_full         (fifo_full),
     .fifo_empty        (),
-    .fifo_almost_full  (fifo_almost_full));
+    .fifo_depth_of     (fifo_depth));
 
   async_fifo_calc # (.fifo_data_size(fifo_data_size),
                      .fifo_ptr_size(fifo_ptr_size)) i_fifo_calc_rd
@@ -59,6 +59,6 @@ module async_fifo_no_sa #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
     .ptr_gray          (rd_ptr_gray),
     .fifo_full         (),
     .fifo_empty        (fifo_empty),
-    .fifo_almost_full  ());
+    .fifo_depth_of     ());
 
 endmodule

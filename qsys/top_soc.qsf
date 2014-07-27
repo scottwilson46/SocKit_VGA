@@ -10,7 +10,7 @@ set_global_assignment -name ORIGINAL_QUARTUS_VERSION 12
 set_global_assignment -name LAST_QUARTUS_VERSION 13.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "WED FEB  6 14:33:30 2013"
 
-set_global_assignment -name QIP_FILE top_qsys2/synthesis/top_qsys2.qip
+set_global_assignment -name QIP_FILE top_qsys/synthesis/top_qsys.qip
 set_global_assignment -name VERILOG_FILE ../top/top_soc.v
 #============================================================
 # DDR3
@@ -99,10 +99,10 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[3]
 #============================================================
 # LED
 #============================================================
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[0]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[1]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[2]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LED[3]
+set_instance_assignment -name IO_STANDARD "2.5-V" -to LED[0]
+set_instance_assignment -name IO_STANDARD "2.5-V" -to LED[1]
+set_instance_assignment -name IO_STANDARD "2.5-V" -to LED[2]
+set_instance_assignment -name IO_STANDARD "2.5-V" -to LED[3]
 
 #============================================================
 # OSC

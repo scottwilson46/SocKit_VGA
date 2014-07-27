@@ -24,6 +24,8 @@ module top_no_ddr3 (
   
   input                    ddr3_avl_read_data_valid,
   input         [127:0]    ddr3_avl_read_data,
+ 
+  output         [31:0]    test_regs,
 
   output                   vga_clk,
   output                   vga_hs,
@@ -85,7 +87,8 @@ ddr3_top i_ddr3_top (
 
   .data_fifo_empty          (data_fifo_empty),
   .data_fifo_rd_data        (ddr_fifo_rd_data),
-  .vga_rd_valid             (vga_rd_valid));
+  .vga_rd_valid             (vga_rd_valid),
+  .test_regs                (test_regs));
 
 vga_control i_vga_control (
   .vga_clk                  (vga_clk_int),

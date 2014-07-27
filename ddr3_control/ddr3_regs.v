@@ -16,6 +16,8 @@ module ddr3_regs (
   output reg [25:0]            ddr3_buffer0_offset,
   output reg [25:0]            ddr3_buffer1_offset,
 
+  output reg [31:0]            test_regs,
+
   input                        clear_buffer0,
   input                        clear_buffer1
 
@@ -33,7 +35,7 @@ wire next_ddr3_buffer0_state;
 wire next_ddr3_buffer1_state;
 reg ddr3_buffer0_state;
 reg ddr3_buffer1_state;
-
+reg [31:0] next_test_regs;
 
 assign ddr3_rd_buffer0_empty = ~ddr3_buffer0_state;
 assign ddr3_rd_buffer1_empty = ~ddr3_buffer1_state;
@@ -44,23 +46,26 @@ begin
 	next_ddr3_buffer1_offset = ddr3_buffer1_offset;
 	next_ddr3_buffer0_wr     = 1'b0;
 	next_ddr3_buffer1_wr     = 1'b0;
+        next_test_regs           = 32'd0;
 	case(csr_addr)
 		8'd00: next_ddr3_buffer0_offset = csr_wr_data;
 		8'd01: next_ddr3_buffer1_offset = csr_wr_data;
 		8'd02: next_ddr3_buffer0_wr     = csr_wr_data[0];
 		8'd03: next_ddr3_buffer1_wr     = csr_wr_data[0];
+                8'd04: next_test_regs           = csr_wr_data[31:0];
 	endcase
 
 end
 
 always @(*)
 begin
-	next_csr_rd_data = 32'd0;
+    next_csr_rd_data = 32'd0;
     case(csr_addr)
       8'd00: next_csr_rd_data = ddr3_buffer0_offset;
       8'd01: next_csr_rd_data = ddr3_buffer1_offset;
       8'd02: next_csr_rd_data = {31'd0, ddr3_buffer0_state};
       8'd03: next_csr_rd_data = {31'd0, ddr3_buffer1_state};
+      8'd04: next_csr_rd_data = test_regs;
     endcase
 end
 
@@ -95,12 +100,14 @@ always @(posedge clk or negedge reset_n)
   	ddr3_buffer1_offset   <= 26'd0;
   	ddr3_buffer0_wr       <= 1'b0;
   	ddr3_buffer1_wr       <= 1'b0;
+        test_regs             <= 32'd0;
   end
   else begin
     ddr3_buffer0_offset   <= next_ddr3_buffer0_offset;
     ddr3_buffer1_offset   <= next_ddr3_buffer1_offset;
     ddr3_buffer0_wr       <= next_ddr3_buffer0_wr;
     ddr3_buffer1_wr       <= next_ddr3_buffer1_wr;
+    test_regs             <= next_test_regs;
   end
 
 always @(posedge ddr3_clk or negedge ddr3_reset_n)
