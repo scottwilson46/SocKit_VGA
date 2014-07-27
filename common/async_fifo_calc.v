@@ -13,7 +13,7 @@ module async_fifo_calc #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
   output reg [fifo_ptr_size:0]            ptr_gray,
   output reg                              fifo_full,
   output reg                              fifo_empty,
-  output reg                              fifo_depth_of);
+  output reg [fifo_ptr_size:0]            fifo_depth_of);
 
   wire [fifo_ptr_size:0] next_fifo_counter;
   reg  [fifo_ptr_size:0] fifo_counter;
@@ -25,7 +25,6 @@ module async_fifo_calc #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
   wire                   next_fifo_full;
   wire                   next_fifo_empty;
   wire [fifo_ptr_size:0] next_fifo_depth_of; 
-  reg  [fifo_ptr_size:0] fifo_depth_of; 
   wire                   next_fifo_almost_full;  
   integer                i,j;   
 

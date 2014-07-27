@@ -42,6 +42,7 @@ add_fileset_file vga_vsync.v           VERILOG PATH ../vga_control/vga_vsync.v
 add_fileset_file altera_pll_vga.v      VERILOG PATH ../vga_control/altera_pll_vga.v
 add_fileset_file altera_pll_vga_0002.v VERILOG PATH ../vga_control/altera_pll_vga_0002.v
 add_fileset_file read_from_ddr3.v      VERILOG PATH ../ddr3_control/read_from_ddr3.v
+add_fileset_file write_to_ddr3.v       VERILOG PATH ../ddr3_control/write_to_ddr3.v
 add_fileset_file ddr3_top.v            VERILOG PATH ../ddr3_control/ddr3_top.v
 add_fileset_file ddr3_regs.v           VERILOG PATH ../ddr3_control/ddr3_regs.v
 add_fileset_file async_fifo.v          VERILOG PATH ../common/async_fifo.v
@@ -125,6 +126,8 @@ set_interface_property ddr3_memory_con SVD_ADDRESS_GROUP ""
 
 add_interface_port ddr3_memory_con ddr3_avl_addr             address             Output 32
 add_interface_port ddr3_memory_con ddr3_avl_read_req         read                Output 1
+add_interface_port ddr3_memory_con ddr3_avl_write_req        write               Output 1
+add_interface_port ddr3_memory_con ddr3_avl_wr_data          writedata           Output 128
 add_interface_port ddr3_memory_con ddr3_avl_read_data        readdata            Input  128
 add_interface_port ddr3_memory_con ddr3_avl_read_data_valid  readdatavalid       Input  1
 add_interface_port ddr3_memory_con ddr3_avl_size             burstcount          Output 3

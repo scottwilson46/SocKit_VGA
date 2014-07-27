@@ -20,6 +20,8 @@ module top_no_ddr3 (
   output                   ddr3_avl_burstbegin,
   output          [2:0]    ddr3_avl_size,
   output                   ddr3_avl_read_req,
+  output                   ddr3_avl_write_req,
+  output        [127:0]    ddr3_avl_wr_data,
   output         [25:0]    ddr3_avl_addr,
   
   input                    ddr3_avl_read_data_valid,
@@ -81,6 +83,8 @@ ddr3_top i_ddr3_top (
   .ddr3_avl_burstbegin      (ddr3_avl_burstbegin),
   .ddr3_avl_size            (ddr3_avl_size),
   .ddr3_avl_read_req        (ddr3_avl_read_req),
+  .ddr3_avl_write_req       (ddr3_avl_write_req),
+  .ddr3_avl_wr_data         (ddr3_avl_wr_data),
   .ddr3_avl_addr            (ddr3_avl_addr),
   .ddr3_avl_read_data_valid (ddr3_avl_read_data_valid),
   .ddr3_avl_read_data       (ddr3_avl_read_data),

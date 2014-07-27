@@ -17,6 +17,9 @@ module ddr3_regs (
   output reg [25:0]            ddr3_buffer1_offset,
 
   output reg [31:0]            test_regs,
+  output reg [31:0]            test_addr,
+  output reg [31:0]            test_wr_data,
+  output                       test_wr_ddr3,
 
   input                        clear_buffer0,
   input                        clear_buffer1
@@ -37,6 +40,11 @@ reg ddr3_buffer0_state;
 reg ddr3_buffer1_state;
 reg [31:0] next_test_regs;
 
+reg [31:0] next_test_addr;
+reg [31:0] next_test_wr_data;
+reg        next_test_wr;
+reg        test_wr;
+
 assign ddr3_rd_buffer0_empty = ~ddr3_buffer0_state;
 assign ddr3_rd_buffer1_empty = ~ddr3_buffer1_state;
 
@@ -46,13 +54,19 @@ begin
 	next_ddr3_buffer1_offset = ddr3_buffer1_offset;
 	next_ddr3_buffer0_wr     = 1'b0;
 	next_ddr3_buffer1_wr     = 1'b0;
-        next_test_regs           = 32'd0;
+        next_test_regs           = test_regs;
+        next_test_addr           = test_addr;
+        next_test_wr_data        = test_wr_data;
+        next_test_wr             = 1'b0;
 	case(csr_addr)
 		8'd00: next_ddr3_buffer0_offset = csr_wr_data;
 		8'd01: next_ddr3_buffer1_offset = csr_wr_data;
 		8'd02: next_ddr3_buffer0_wr     = csr_wr_data[0];
 		8'd03: next_ddr3_buffer1_wr     = csr_wr_data[0];
                 8'd04: next_test_regs           = csr_wr_data[31:0];
+                8'd05: next_test_addr           = csr_wr_data[31:0];
+                8'd06: next_test_wr_data        = csr_wr_data[31:0];
+                8'd07: next_test_wr             = csr_wr_data[0];
 	endcase
 
 end
@@ -66,6 +80,8 @@ begin
       8'd02: next_csr_rd_data = {31'd0, ddr3_buffer0_state};
       8'd03: next_csr_rd_data = {31'd0, ddr3_buffer1_state};
       8'd04: next_csr_rd_data = test_regs;
+      8'd05: next_csr_rd_data = test_addr;
+      8'd06: next_csr_rd_data = test_wr_data;
     endcase
 end
 
@@ -85,6 +101,14 @@ async_handshake i_async_handshake_set_full1 (
 	.req_in      (ddr3_buffer1_wr),
 	.ack_out     (ddr3_buffer1_wr_ddr3));
 
+async_handshake i_async_handshake_set_test_wr (
+        .req_clk     (clk),
+        .ack_clk     (ddr3_clk),
+        .req_reset_n (reset_n),
+        .ack_reset_n (ddr3_reset_n),
+        .req_in      (test_wr),
+        .ack_out     (test_wr_ddr3));
+
 assign next_ddr3_buffer0_state = (ddr3_buffer0_wr_ddr3) ? 1'b1 :
 	                             (clear_buffer0)        ? 1'b0 :
 	                             ddr3_buffer0_state;
@@ -101,6 +125,9 @@ always @(posedge clk or negedge reset_n)
   	ddr3_buffer0_wr       <= 1'b0;
   	ddr3_buffer1_wr       <= 1'b0;
         test_regs             <= 32'd0;
+        test_addr             <= 32'd0;
+        test_wr_data          <= 32'd0;
+        test_wr               <= 1'b0;
   end
   else begin
     ddr3_buffer0_offset   <= next_ddr3_buffer0_offset;

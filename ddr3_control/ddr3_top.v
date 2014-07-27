@@ -16,6 +16,8 @@ module ddr3_top #(parameter IMAGE_WIDTH = 1280,
   output                   ddr3_avl_burstbegin,
   output          [2:0]    ddr3_avl_size,
   output                   ddr3_avl_read_req,
+  output                   ddr3_avl_write_req,
+  output        [127:0]    ddr3_avl_wr_data,
   output         [25:0]    ddr3_avl_addr,
   input                    ddr3_avl_read_data_valid,
   input         [127:0]    ddr3_avl_read_data,
@@ -30,6 +32,14 @@ module ddr3_top #(parameter IMAGE_WIDTH = 1280,
 
 wire [25:0] ddr3_buffer0_offset;
 wire [25:0] ddr3_buffer1_offset;
+
+wire [31:0] test_addr;
+wire [31:0] test_wr_data;
+wire        test_wr;
+
+wire [25:0] ddr3_avl_rd_addr, ddr3_avl_wr_addr;
+wire        ddr3_avl_rd_burstbegin, ddr3_avl_wr_burstbegin;
+wire  [2:0] ddr3_avl_rd_size, ddr3_avl_wr_size;
 
 reset_sync i_reset_sync_ddr3 (
   .clk                    (ddr3_clk),
@@ -51,11 +61,29 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
   .data_fifo_almost_full  (data_fifo_almost_full),
 
   .ddr3_avl_ready         (ddr3_avl_ready),
-  .ddr3_avl_burstbegin    (ddr3_avl_burstbegin),
-  .ddr3_avl_size          (ddr3_avl_size),
+  .ddr3_avl_burstbegin    (ddr3_avl_rd_burstbegin),
+  .ddr3_avl_size          (ddr3_avl_rd_size),
   .ddr3_avl_read_req      (ddr3_avl_read_req),
-  .ddr3_avl_addr          (ddr3_avl_addr));
- 
+  .ddr3_avl_addr          (ddr3_avl_rd_addr));
+
+write_to_ddr3 i_write_to_ddr3 (
+  .ddr3_clk               (ddr3_clk),
+  .reset_n                (ddr3_reset_n),
+
+  .test_addr              (test_addr),
+  .test_wr_data           (test_wr_data),
+  .test_wr                (test_wr),
+
+  .ddr3_avl_ready         (ddr3_avl_ready),
+  .ddr3_avl_burstbegin    (ddr3_avl_wr_burstbegin),
+  .ddr3_avl_size          (ddr3_avl_wr_size),
+  .ddr3_avl_write_req     (ddr3_avl_write_req),
+  .ddr3_avl_addr          (ddr3_avl_wr_addr));
+
+assign ddr3_avl_burstbegin = ddr3_avl_read_req ? ddr3_avl_rd_burstbegin : ddr3_avl_wr_burstbegin;
+assign ddr3_avl_size       = ddr3_avl_read_req ? ddr3_avl_rd_size       : ddr3_avl_wr_size;
+assign ddr3_avl_addr       = ddr3_avl_read_req ? ddr3_avl_rd_addr       : ddr3_avl_wr_addr;
+
 async_fifo #(.fifo_data_size(128),
 	         .fifo_ptr_size (9)) i_async_fifo (
   .wr_clk                 (ddr3_clk),
@@ -91,6 +119,9 @@ ddr3_regs i_ddr3_regs (
   .ddr3_buffer1_offset    (ddr3_buffer1_offset),
 
   .test_regs              (test_regs),
+  .test_addr              (test_addr),
+  .test_wr_data           (test_wr_data),
+  .test_wr_ddr3           (test_wr),
 
   .clear_buffer0          (clear_buffer0),
   .clear_buffer1          (clear_buffer1));
