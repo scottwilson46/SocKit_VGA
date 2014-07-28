@@ -10,6 +10,16 @@ wire [31:0] csr_rd_data;
 wire  [7:0] csr_address;
 wire data_fifo_empty;
 
+wire         ddr3_avl_ready;
+wire         ddr3_avl_burstbegin;
+wire  [25:0] ddr3_avl_addr;
+wire         ddr3_avl_rdata_valid;
+wire [127:0] ddr3_avl_rdata;
+wire [127:0] ddr3_avl_wdata;
+wire         ddr3_avl_read_req;
+wire         ddr3_avl_write_req;
+wire   [2:0] ddr3_avl_size; 
+
 initial
 begin 
   clk = 1'b0;
@@ -46,19 +56,33 @@ ddr3_top #(.IMAGE_WIDTH  (10),
   .csr_wr_data      (csr_wr_data),
   .csr_rd_data      (csr_rd_data),
 
-  .ddr3_avl_ready           (1'b1),
-  .ddr3_avl_burstbegin      (),
-  .ddr3_avl_size            (),
-  .ddr3_avl_read_req        (),
-  .ddr3_avl_write_req       (),
-  .ddr3_avl_wr_data         (),
-  .ddr3_avl_addr            (),
-  .ddr3_avl_read_data_valid (1'b0),
-  .ddr3_avl_read_data       (128'd0),
+  .ddr3_avl_ready           (ddr3_avl_ready),
+  .ddr3_avl_burstbegin      (ddr3_avl_burstbegin),
+  .ddr3_avl_addr            (ddr3_avl_addr),
+  .ddr3_avl_read_data_valid (ddr3_avl_rdata_valid),
+  .ddr3_avl_read_data       (ddr3_avl_rdata),
+  .ddr3_avl_wr_data         (ddr3_avl_wdata),
+  .ddr3_avl_read_req        (ddr3_avl_read_req),
+  .ddr3_avl_write_req       (ddr3_avl_write_req),
+  .ddr3_avl_size            (ddr3_avl_size),
 
   .data_fifo_empty      (data_fifo_empty),
   .data_fifo_rd_data    (),
   .vga_rd_valid         (~data_fifo_empty));
+
+ddr3_controller_sim i_ddr3_sim (
+  .sodimm1_ddr3_avl_clk             (clk),
+  .sodimm1_ddr3_avl_reset_n         (~reset),
+  .sodimm1_ddr3_avl_ready           (ddr3_avl_ready),
+  .sodimm1_ddr3_avl_burstbegin      (ddr3_avl_burstbegin),
+  .sodimm1_ddr3_avl_addr            (ddr3_avl_addr),
+  .sodimm1_ddr3_avl_rdata_valid     (ddr3_avl_rdata_valid),
+  .sodimm1_ddr3_avl_rdata           (ddr3_avl_rdata),
+  .sodimm1_ddr3_avl_wdata           (ddr3_avl_wdata),
+  .sodimm1_ddr3_avl_be              (ddr3_avl_be),
+  .sodimm1_ddr3_avl_read_req        (ddr3_avl_read_req),
+  .sodimm1_ddr3_avl_write_req       (ddr3_avl_write_req),
+  .sodimm1_ddr3_avl_size            (ddr3_avl_size));
 
 initial
 begin 

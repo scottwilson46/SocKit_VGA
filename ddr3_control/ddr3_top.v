@@ -32,6 +32,8 @@ module ddr3_top #(parameter IMAGE_WIDTH = 1280,
 
 wire [25:0] ddr3_buffer0_offset;
 wire [25:0] ddr3_buffer1_offset;
+wire        clear_buffer0, clear_buffer1;
+wire        wr_finish;
 
 wire [31:0] test_addr;
 wire [31:0] test_wr_data;
@@ -53,8 +55,8 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
 
   .ddr3_rd_buffer0_empty  (ddr3_rd_buffer0_empty),
   .ddr3_rd_buffer1_empty  (ddr3_rd_buffer1_empty),
-  .clear_buffer0          (clear_buffer0),
-  .clear_buffer1          (clear_buffer1),
+  .clear_buffer0_clk      (clear_buffer0),
+  .clear_buffer1_clk      (clear_buffer1),
   .ddr3_buffer0_offset    (ddr3_buffer0_offset),
   .ddr3_buffer1_offset    (ddr3_buffer1_offset),
 
@@ -73,6 +75,7 @@ write_to_ddr3 i_write_to_ddr3 (
   .test_addr              (test_addr),
   .test_wr_data           (test_wr_data),
   .test_wr                (test_wr),
+  .wr_finish_clk          (wr_finish),
 
   .ddr3_avl_ready         (ddr3_avl_ready),
   .ddr3_avl_burstbegin    (ddr3_avl_wr_burstbegin),
@@ -124,7 +127,8 @@ ddr3_regs i_ddr3_regs (
   .test_wr_ddr3           (test_wr),
 
   .clear_buffer0          (clear_buffer0),
-  .clear_buffer1          (clear_buffer1));
+  .clear_buffer1          (clear_buffer1),
+  .wr_finish              (wr_finish));
 
 endmodule
 

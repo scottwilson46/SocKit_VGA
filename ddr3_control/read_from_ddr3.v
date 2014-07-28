@@ -5,8 +5,8 @@ module read_from_ddr3 #(parameter IMAGE_WIDTH  = 1280,
 
   input                    ddr3_rd_buffer0_empty,
   input                    ddr3_rd_buffer1_empty,
-  output reg               clear_buffer0,
-  output reg               clear_buffer1,
+  output                   clear_buffer0_clk,
+  output                   clear_buffer1_clk,
   input          [25:0]    ddr3_buffer0_offset,
   input          [25:0]    ddr3_buffer1_offset,
 
@@ -31,8 +31,8 @@ reg         next_ddr3_avl_burstbegin;
 reg         next_ddr3_avl_read_req; 
 reg  [23:0] next_transfer_count, transfer_count;
 
-reg         next_clear_buffer0;
-reg         next_clear_buffer1;
+reg         next_clear_buffer0, clear_buffer0;
+reg         next_clear_buffer1, clear_buffer1;
 reg         next_buffer_sel, buffer_sel;
 
 always @(*)
@@ -42,8 +42,8 @@ begin
   next_ddr3_avl_read_req   = 1'b0;
   next_transfer_count      = transfer_count;
   next_buffer_sel          = buffer_sel;
-  next_clear_buffer0       = clear_buffer0;
-  next_clear_buffer1       = clear_buffer1;
+  next_clear_buffer0       = 1'b0;
+  next_clear_buffer1       = 1'b0;
 
   case (state)
     IDLE:
@@ -98,6 +98,22 @@ begin
       end
   endcase
 end
+
+async_handshake i_async_handshake_clear0 (
+	.req_clk     (ddr3_clk),
+	.ack_clk     (clk),
+	.req_reset_n (ddr3_reset_n),
+	.ack_reset_n (reset_n),
+	.req_in      (clear_buffer0),
+	.ack_out     (clear_buffer0_clk));
+
+async_handshake i_async_handshake_clear1 (
+	.req_clk     (ddr3_clk),
+	.ack_clk     (clk),
+	.req_reset_n (ddr3_reset_n),
+	.ack_reset_n (reset_n),
+	.req_in      (clear_buffer1),
+	.ack_out     (clear_buffer1_clk));
 
 always @(posedge ddr3_clk or negedge reset_n)
   if (!reset_n)
