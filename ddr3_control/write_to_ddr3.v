@@ -15,8 +15,9 @@ module write_to_ddr3 (
   output reg     [25:0]    ddr3_avl_addr
 );
 
-parameter IDLE        = 2'd0;
-parameter START_WRITE = 2'd1;
+parameter IDLE         = 2'd0;
+parameter START_WRITE  = 2'd1;
+parameter WRITE_FINISH = 2'd2;
 
 assign ddr3_avl_size = 3'b100;
 

@@ -79,7 +79,6 @@ ddr3_controller_sim i_ddr3_sim (
   .sodimm1_ddr3_avl_rdata_valid     (ddr3_avl_rdata_valid),
   .sodimm1_ddr3_avl_rdata           (ddr3_avl_rdata),
   .sodimm1_ddr3_avl_wdata           (ddr3_avl_wdata),
-  .sodimm1_ddr3_avl_be              (ddr3_avl_be),
   .sodimm1_ddr3_avl_read_req        (ddr3_avl_read_req),
   .sodimm1_ddr3_avl_write_req       (ddr3_avl_write_req),
   .sodimm1_ddr3_avl_size            (ddr3_avl_size));

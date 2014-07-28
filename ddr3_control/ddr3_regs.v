@@ -22,8 +22,8 @@ module ddr3_regs (
   output                       test_wr_ddr3,
 
   input                        clear_buffer0,
-  input                        clear_buffer1
-
+  input                        clear_buffer1,
+  input                        wr_finish
 );
 
 
@@ -45,7 +45,8 @@ reg [31:0] next_test_wr_data;
 reg        next_test_wr;
 reg        test_wr;
 
-reg        next_ddr3_wr_state, ddr3_wr_state;
+wire       next_ddr3_wr_state;
+reg        ddr3_wr_state;
 
 assign ddr3_rd_buffer0_empty = ~ddr3_buffer0_state;
 assign ddr3_rd_buffer1_empty = ~ddr3_buffer1_state;
