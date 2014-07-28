@@ -1,6 +1,8 @@
 module read_from_ddr3 #(parameter IMAGE_WIDTH  = 1280,
                         parameter IMAGE_HEIGHT = 1024) (
   input                    ddr3_clk,
+  input                    ddr3_reset_n,
+  input                    clk,
   input                    reset_n,
 
   input                    ddr3_rd_buffer0_empty,
@@ -23,6 +25,8 @@ module read_from_ddr3 #(parameter IMAGE_WIDTH  = 1280,
 parameter IDLE         = 2'd0;
 parameter START_READ   = 2'd1;
 
+parameter MAX_COUNT = (((IMAGE_WIDTH*IMAGE_HEIGHT)>>2)-1);
+
 assign ddr3_avl_size = 3'b100;
 
 reg   [3:0] next_state, state; 
@@ -44,6 +48,7 @@ begin
   next_buffer_sel          = buffer_sel;
   next_clear_buffer0       = 1'b0;
   next_clear_buffer1       = 1'b0;
+  next_ddr3_avl_addr       = ddr3_avl_addr;
 
   case (state)
     IDLE:
@@ -67,9 +72,10 @@ begin
       end
       else if (ddr3_avl_ready)
       begin
-        if (transfer_count == (((IMAGE_WIDTH*IMAGE_HEIGHT)>>2)-1))
+        if (transfer_count == MAX_COUNT)
         begin
           if (~buffer_sel)
+          begin
             if (!ddr3_rd_buffer1_empty) begin
               next_buffer_sel = 1'b1;
               next_clear_buffer0 = 1'b1;
@@ -77,7 +83,9 @@ begin
             else begin
               next_buffer_sel = 1'b0;
             end
-          else begin
+          end
+          else 
+          begin
             if (!ddr3_rd_buffer0_empty) begin
               next_buffer_sel = 1'b0;
               next_clear_buffer1 = 1'b1;
@@ -115,8 +123,8 @@ async_handshake i_async_handshake_clear1 (
 	.req_in      (clear_buffer1),
 	.ack_out     (clear_buffer1_clk));
 
-always @(posedge ddr3_clk or negedge reset_n)
-  if (!reset_n)
+always @(posedge ddr3_clk or negedge ddr3_reset_n)
+  if (!ddr3_reset_n)
   begin
     state                 <= IDLE;
     ddr3_avl_addr         <= 26'd0;

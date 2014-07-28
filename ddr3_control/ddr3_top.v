@@ -51,7 +51,9 @@ reset_sync i_reset_sync_ddr3 (
 read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
                  .IMAGE_HEIGHT(IMAGE_HEIGHT)) i_read_from_ddr3 (
   .ddr3_clk               (ddr3_clk),
-  .reset_n                (ddr3_reset_n),
+  .ddr3_reset_n           (ddr3_reset_n),
+  .clk                    (clk),
+  .reset_n                (reset_n),
 
   .ddr3_rd_buffer0_empty  (ddr3_rd_buffer0_empty),
   .ddr3_rd_buffer1_empty  (ddr3_rd_buffer1_empty),
@@ -70,7 +72,9 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
 
 write_to_ddr3 i_write_to_ddr3 (
   .ddr3_clk               (ddr3_clk),
-  .reset_n                (ddr3_reset_n),
+  .ddr3_reset_n           (ddr3_reset_n),
+  .clk                    (clk),
+  .reset_n                (reset_n),
 
   .test_addr              (test_addr),
   .test_wr_data           (test_wr_data),
@@ -91,8 +95,8 @@ async_fifo #(.fifo_data_size(128),
 	         .fifo_ptr_size (9)) i_async_fifo (
   .wr_clk                 (ddr3_clk),
   .rd_clk                 (vga_clk),
-  .reset_wr               (ddr3_reset_n),
-  .reset_rd               (vga_reset_n),
+  .reset_wr               (~ddr3_reset_n),
+  .reset_rd               (~vga_reset_n),
 
   .wr_valid               (ddr3_avl_read_data_valid),
   .rd_valid               (vga_rd_valid),

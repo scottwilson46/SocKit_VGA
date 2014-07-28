@@ -1,5 +1,7 @@
 module write_to_ddr3 (
   input                    ddr3_clk,
+  input                    ddr3_reset_n,
+  input                    clk,
   input                    reset_n,
 
   input          [31:0]    test_addr,
@@ -72,8 +74,8 @@ async_handshake i_async_handshake_wr_finish (
 	.req_in      (wr_finish),
 	.ack_out     (wr_finish_clk));
 
-always @(posedge ddr3_clk or negedge reset_n)
-    if (!reset_n)
+always @(posedge ddr3_clk or negedge ddr3_reset_n)
+    if (!ddr3_reset_n)
     begin
         state                <= IDLE;
         ddr3_avl_addr        <= 'd0;

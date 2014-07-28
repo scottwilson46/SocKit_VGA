@@ -61,6 +61,8 @@ begin
         next_test_addr           = test_addr;
         next_test_wr_data        = test_wr_data;
         next_test_wr             = 1'b0;
+        if (csr_write)
+	begin
 	case(csr_addr)
 		8'd00: next_ddr3_buffer0_offset = csr_wr_data;
 		8'd01: next_ddr3_buffer1_offset = csr_wr_data;
@@ -71,7 +73,7 @@ begin
                 8'd06: next_test_wr_data        = csr_wr_data[31:0];
                 8'd07: next_test_wr             = csr_wr_data[0];
 	endcase
-
+	end
 end
 
 always @(*)
@@ -143,6 +145,7 @@ always @(posedge clk or negedge reset_n)
     ddr3_buffer0_wr       <= next_ddr3_buffer0_wr;
     ddr3_buffer1_wr       <= next_ddr3_buffer1_wr;
     test_regs             <= next_test_regs;
+    test_wr               <= next_test_wr;
   end
 
 always @(posedge ddr3_clk or negedge ddr3_reset_n)

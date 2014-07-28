@@ -49,6 +49,7 @@ ddr3_top #(.IMAGE_WIDTH  (10),
   .clk              (clk),
   .vga_clk          (clk),
   .reset_n          (~reset),
+  .vga_reset_n      (~reset),
   
   .csr_read         (csr_read),
   .csr_write        (csr_write),
