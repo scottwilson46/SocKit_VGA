@@ -45,6 +45,8 @@ reg [31:0] next_test_wr_data;
 reg        next_test_wr;
 reg        test_wr;
 
+reg        next_ddr3_wr_state, ddr3_wr_state;
+
 assign ddr3_rd_buffer0_empty = ~ddr3_buffer0_state;
 assign ddr3_rd_buffer1_empty = ~ddr3_buffer1_state;
 
@@ -82,6 +84,7 @@ begin
       8'd04: next_csr_rd_data = test_regs;
       8'd05: next_csr_rd_data = test_addr;
       8'd06: next_csr_rd_data = test_wr_data;
+      8'd07: next_csr_rd_data = {31'd0, ddr3_wr_state};
     endcase
 end
 
@@ -117,6 +120,10 @@ assign next_ddr3_buffer1_state = (ddr3_buffer1_wr_ddr3) ? 1'b1 :
 	                             (clear_buffer1)        ? 1'b0 :
 	                             ddr3_buffer1_state;
 
+assign next_ddr3_wr_state      = (test_wr) ? 1'b1 :
+                                 (wr_finish) ? 1'b0 :
+			         ddr3_wr_state;
+
 always @(posedge clk or negedge reset_n)
   if (!reset_n)
   begin
@@ -142,10 +149,12 @@ always @(posedge ddr3_clk or negedge ddr3_reset_n)
   begin
   	ddr3_buffer0_state    <= 1'b0;
   	ddr3_buffer1_state    <= 1'b0;
+	ddr3_wr_state         <= 1'b0;
   end
   else begin
   	ddr3_buffer0_state    <= next_ddr3_buffer0_state;
   	ddr3_buffer1_state    <= next_ddr3_buffer1_state;
+	ddr3_wr_state         <= next_ddr3_wr_state;
   end
 
 endmodule
