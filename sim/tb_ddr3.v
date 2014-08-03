@@ -9,6 +9,9 @@ wire [31:0] csr_wr_data;
 wire [31:0] csr_rd_data;
 wire  [7:0] csr_address;
 wire data_fifo_empty;
+reg   [7:0] data;
+reg [127:0] rd_data_gen;
+integer i,j;
 
 wire         ddr3_avl_ready;
 wire         ddr3_avl_burstbegin;
@@ -71,7 +74,7 @@ ddr3_top #(.IMAGE_WIDTH  (10),
   .data_fifo_rd_data    (),
   .vga_rd_valid         (~data_fifo_empty));
 
-ddr3_controller_sim i_ddr3_sim (
+ddr3_controller_sim #(.DEBUG(1))  i_ddr3_sim (
   .sodimm1_ddr3_avl_clk             (clk),
   .sodimm1_ddr3_avl_reset_n         (~reset),
   .sodimm1_ddr3_avl_ready           (ddr3_avl_ready),
@@ -83,6 +86,22 @@ ddr3_controller_sim i_ddr3_sim (
   .sodimm1_ddr3_avl_read_req        (ddr3_avl_read_req),
   .sodimm1_ddr3_avl_write_req       (ddr3_avl_write_req),
   .sodimm1_ddr3_avl_size            (ddr3_avl_size));
+
+initial
+begin
+    data = 8'd0;
+    for (i=0;i<1024;i++)
+    begin
+        rd_data_gen = 128'd0;
+	for (j=0; j<16; j++)
+	begin
+            rd_data_gen = rd_data_gen + (data << (j*8));
+	    data = data + 'd1;
+	end
+        i_ddr3_sim.ram[i] = rd_data_gen;
+	$display("wr %d = %x", i, rd_data_gen);
+    end
+end
 
 initial
 begin 

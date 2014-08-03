@@ -69,7 +69,6 @@ set_interface_property reset_n ENABLED true
 add_interface_port reset_n reset_n reset_n Input 1
 
 add_interface avalon_slave avalon end
-set_interface_property avalon_slave addressAlignment NATIVE
 set_interface_property avalon_slave addressUnits WORDS
 set_interface_property avalon_slave associatedClock clk
 set_interface_property avalon_slave associatedReset reset_n
@@ -81,8 +80,7 @@ set_interface_property avalon_slave holdTime 0
 set_interface_property avalon_slave linewrapBursts false
 set_interface_property avalon_slave maximumPendingReadTransactions 0
 set_interface_property avalon_slave readLatency 0
-set_interface_property avalon_slave readWaitStates 0
-set_interface_property avalon_slave readWaitTime 0
+set_interface_property avalon_slave readWaitTime 1
 set_interface_property avalon_slave setupTime 0
 set_interface_property avalon_slave timingUnits Cycles
 set_interface_property avalon_slave writeWaitTime 0
@@ -91,11 +89,11 @@ set_interface_property avalon_slave EXPORT_OF ""
 set_interface_property avalon_slave PORT_NAME_MAP ""
 set_interface_property avalon_slave SVD_ADDRESS_GROUP ""
 
-add_interface_port avalon_slave csr_addr  address Input 3
+add_interface_port avalon_slave csr_addr  address Input 8
 add_interface_port avalon_slave csr_read     read Input 1
-add_interface_port avalon_slave csr_rd_data  readdata Output 16
+add_interface_port avalon_slave csr_rd_data  readdata Output 32
 add_interface_port avalon_slave csr_write    write Input 1
-add_interface_port avalon_slave csr_wr_data  writedata Input 16
+add_interface_port avalon_slave csr_wr_data  writedata Input 32
 set_interface_assignment avalon_slave embeddedsw.configuration.isFlash 0
 set_interface_assignment avalon_slave embeddedsw.configuration.isMemoryDevice 0
 set_interface_assignment avalon_slave embeddedsw.configuration.isNonVolatileStorage 0
@@ -197,6 +195,12 @@ set_interface_property test_regs associatedClock ""
 set_interface_property test_regs associatedReset ""
 set_interface_property test_regs ENABLED true
 add_interface_port test_regs test_regs export Output 32
+
+add_interface key_val conduit start
+set_interface_property key_val associatedClock ""
+set_interface_property key_val associatedReset ""
+set_interface_property key_val ENABLED true
+add_interface_port key_val key_val export Input 4 
 
 
 

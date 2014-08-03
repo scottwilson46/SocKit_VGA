@@ -20,7 +20,9 @@ module async_fifo #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
 reg dout_valid;
 wire [fifo_data_size-1:0] rd_data_int;
 reg  [fifo_data_size-1:0] rd_data_reg;
+wire                      rd_valid_int;
 reg                       rd_valid_reg;
+wire                      fifo_empty_int;
 
 async_fifo_no_sa #(.fifo_data_size (fifo_data_size),
                    .fifo_ptr_size  (fifo_ptr_size)) i_async_fifo_no_sa (

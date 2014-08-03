@@ -16,7 +16,7 @@ parameter READ   = 8'd2;
 parameter FINISH = 8'd3;
 
 reg  [7:0] state;
-reg        write_not_read;
+reg  [1:0] write_not_read;
 reg  [7:0] address;
 reg [31:0] data;
 
@@ -85,7 +85,11 @@ always @(posedge clk or negedge reset_n)
         state  <= IDLE;
       end
       READ:
+      begin
+	csr_read   <= 1'b1;
+        csr_address <= address;
         state  <= IDLE;
+      end
       FINISH: 
         state  <= FINISH;
  

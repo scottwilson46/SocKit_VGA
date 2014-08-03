@@ -171,7 +171,7 @@ always @(posedge sodimm1_ddr3_avl_clk or negedge sodimm1_ddr3_avl_reset_n)
       rd_data_valid <= 1'b1;
       rd_data <= ram[rd_addr];
       if (DEBUG)
-        $display("ReadDDR3: %x=%x", rd_addr, rd_data);
+        $display("ReadDDR3 : %x=%x", rd_addr, ram[rd_addr]);
     end
     else
       rd_data_valid <= 1'b0;

@@ -1,6 +1,5 @@
 module top_soc (
 
-  input                    clk_bot1,     // 100MHz
   input                    OSC_50_B3B,
 
   inout                    hps_0_hps_io_hps_io_gpio_inst_GPIO09,
@@ -41,19 +40,19 @@ module top_soc (
   output                   vga_blank_n,
   output                   vga_sync_n,
   
-  output          [3:0]    LED
+  output          [3:0]    LED,
+  input           [3:0]    KEY
 );
 
 wire hps_fpga_reset_n;
 wire [31:0] test_regs;
+wire [3:0] key_val;
 assign LED = test_regs[3:0];
 
 top_qsys i_qsys (
 
   .clk_clk                              (OSC_50_B3B),
-  .clk_100_clk                          (clk_bot1),
   .reset_reset_n                        (hps_fpga_reset_n),
-  .reset_100_reset_n                    (hps_fpga_reset_n),
 
   .hps_0_hps_io_hps_io_gpio_inst_GPIO09 (hps_0_hps_io_hps_io_gpio_inst_GPIO09),
   .hps_0_hps_io_hps_io_gpio_inst_GPIO35 (hps_0_hps_io_hps_io_gpio_inst_GPIO35),
@@ -94,7 +93,8 @@ top_qsys i_qsys (
   .top_no_ddr3_0_vga_sync_n_export      (vga_sync_n),
   .top_no_ddr3_0_vga_clk_export         (vga_clk),
 
-  .top_no_ddr3_0_test_regs_export       (test_regs));
+  .top_no_ddr3_0_test_regs_export       (test_regs),
+  .top_no_ddr3_0_key_val_export         (key_val));
 
 endmodule
 
