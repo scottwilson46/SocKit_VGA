@@ -1,5 +1,6 @@
 module top_no_ddr3 (
 
+  input                    clk_50,
   input                    clk,
   input                    ddr3_clk,
   input                    reset_n,
@@ -9,6 +10,7 @@ module top_no_ddr3 (
   output          [7:0]    vga_b,
 
   input                    test_pat,
+  input           [3:0]    key_val,
 
   input                    csr_read,
   input                    csr_write,
@@ -28,7 +30,6 @@ module top_no_ddr3 (
   input         [127:0]    ddr3_avl_read_data,
  
   output         [31:0]    test_regs,
-  input           [3:0]    key_val,
 
   output                   vga_clk,
   output                   vga_hs,
@@ -40,11 +41,14 @@ reg reset_n_sync0;
 reg reset_n_sync1;
 reg reset_n_sync2;
 
+reg reset_50_n_sync0;
+reg reset_50_n_sync1;
+reg reset_50_n_sync2;
+
+
 wire [127:0] ddr_fifo_rd_data;
 wire         vga_rd_valid;
 wire         data_fifo_empty;
-wire         vga_clk_int;
-wire         pll_locked;
 
 always @(posedge clk or negedge reset_n)
   if (!reset_n)
@@ -60,10 +64,25 @@ always @(posedge clk or negedge reset_n)
     reset_n_sync2    <= reset_n_sync1;
   end
 
+always @(posedge clk_50 or negedge reset_n)
+  if (!reset_n)
+  begin
+    reset_50_n_sync0    <= 1'b0;
+    reset_50_n_sync1    <= 1'b0;
+    reset_50_n_sync2    <= 1'b0;
+  end
+  else
+  begin 
+    reset_50_n_sync0    <= reset_n;
+    reset_50_n_sync1    <= reset_50_n_sync0;
+    reset_50_n_sync2    <= reset_50_n_sync1;
+  end
+
+
 // Instantiate PLL for VGA clk:
 altera_pll_vga i_pll (
-  .refclk                   (clk),
-  .rst                      (~reset_n_sync2),
+  .refclk                   (clk_50),
+  .rst                      (~reset_50_n_sync2),
 
   .outclk_0                 (vga_clk_int),
   .locked                   (pll_locked));

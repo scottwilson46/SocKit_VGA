@@ -110,7 +110,7 @@ begin
       end
  
     START_READ:
-      if (!ddr3_avl_ready)
+      if (!ddr3_avl_ready && ~data_fifo_almost_full)
       begin
         next_ddr3_avl_burstbegin = 1'b1;
         next_ddr3_avl_read_req   = 1'b1;

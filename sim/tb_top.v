@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb_ddr3 ();
+module tb_top ();
 
 reg clk, reset;
 wire csr_read;
@@ -46,13 +46,18 @@ csr_access i_csr_access (
   .csr_read     (csr_read),
   .csr_rd_data  (csr_rd_data));
 
-ddr3_top #(.IMAGE_WIDTH  (10),
-           .IMAGE_HEIGHT (10)) i_ddr3_top (
-  .ddr3_clk         (clk),
+top_no_ddr3 i_top (
+  .clk_50           (clk),
   .clk              (clk),
-  .vga_clk          (clk),
+  .ddr3_clk         (clk),
   .reset_n          (~reset),
-  .vga_reset_n      (~reset),
+
+  .vga_r            (),
+  .vga_g            (),
+  .vga_b            (),
+
+  .test_pat         (1'b0),
+  .key_val          (4'd0),
   
   .csr_read         (csr_read),
   .csr_write        (csr_write),
@@ -70,9 +75,13 @@ ddr3_top #(.IMAGE_WIDTH  (10),
   .ddr3_avl_write_req       (ddr3_avl_write_req),
   .ddr3_avl_size            (ddr3_avl_size),
 
-  .data_fifo_empty      (data_fifo_empty),
-  .data_fifo_rd_data    (),
-  .vga_rd_valid         (~data_fifo_empty));
+  .test_regs                (),
+
+  .vga_clk                  (),
+  .vga_hs                   (),
+  .vga_vs                   (),
+  .vga_blank_n              (),
+  .vga_sync_n               ());
 
 ddr3_controller_sim #(.DEBUG(1))  i_ddr3_sim (
   .sodimm1_ddr3_avl_clk             (clk),
@@ -107,7 +116,7 @@ initial
 begin 
   $dumpfile("new.vcd");
   $dumpvars();
-  #10000 $finish;
+  #10000000 $finish;
 end
 
 endmodule

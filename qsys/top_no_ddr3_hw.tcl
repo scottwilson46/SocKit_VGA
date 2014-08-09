@@ -57,6 +57,11 @@ set_interface_property clk clockRate 0
 set_interface_property clk ENABLED true
 add_interface_port clk clk clk Input 1
 
+add_interface clk_50 clock sink
+set_interface_property clk_50 clockRate 0
+set_interface_property clk_50 ENABLED true
+add_interface_port clk_50 clk_50 clk Input 1
+
 add_interface ddr3_clk clock sink
 set_interface_property ddr3_clk clockRate 0
 set_interface_property ddr3_clk ENABLED true
