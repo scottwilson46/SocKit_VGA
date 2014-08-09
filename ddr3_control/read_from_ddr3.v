@@ -142,7 +142,8 @@ begin
                 end
         end
         WAIT_FOR_FIFO_TO_EMPTY:
-            next_state = START_READ;
+            if (!data_fifo_almost_full)
+                next_state = START_READ;
     endcase
 end
  
