@@ -31,6 +31,17 @@ module ddr3_top #(parameter IMAGE_WIDTH = 1280,
 
 );
 
+parameter READ_DATA_FIFO_DEPTH = 9;
+parameter READ_DATA_FIFO_SIZE  = (1<<READ_DATA_FIFO_DEPTH);
+parameter READ_DATA_FIFO_SPACE = READ_DATA_FIFO_SIZE-100;
+
+wire [31:0] tmp1 = READ_DATA_FIFO_SIZE;
+wire [31:0] tmp2 = READ_DATA_FIFO_SPACE;
+
+wire [READ_DATA_FIFO_DEPTH:0] next_fifo_depth_ddr3;
+reg  [READ_DATA_FIFO_DEPTH:0] fifo_depth_ddr3;
+wire                          almost_full_ddr3;
+
 wire [25:0] ddr3_buffer0_offset;
 wire [25:0] ddr3_buffer1_offset;
 wire        clear_buffer0, clear_buffer1;
@@ -91,7 +102,7 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
   .rd_finish_clk          (rd_finish),
   .test_rd_data_valid     (test_rd_data_valid),
 
-  .data_fifo_almost_full  (data_fifo_almost_full),
+  .data_fifo_almost_full  (almost_full_ddr3),
 
   .ddr3_avl_ready         (ddr3_avl_ready),
   .ddr3_avl_burstbegin    (ddr3_avl_rd_burstbegin),
@@ -128,8 +139,25 @@ assign ddr3_avl_burstbegin = ddr3_avl_read_req ? ddr3_avl_rd_burstbegin : ddr3_a
 assign ddr3_avl_size       = ddr3_avl_read_req ? ddr3_avl_rd_size       : ddr3_avl_wr_size;
 assign ddr3_avl_addr       = ddr3_avl_read_req ? ddr3_avl_rd_addr       : ddr3_avl_wr_addr;
 
+assign next_fifo_depth_ddr3 = ((ddr3_avl_read_req && ddr3_avl_ready && ~test_rd_data_valid) &&
+                              (vga_rd_valid)) ?
+                                        (fifo_depth_ddr3 + 'd3) :
+                              (ddr3_avl_read_req && ddr3_avl_ready && ~test_rd_data_valid) ? 
+                                        (fifo_depth_ddr3 + 'd4) :
+                              (vga_rd_valid) ?
+                                        (fifo_depth_ddr3 - 'd1) :
+                              fifo_depth_ddr3;
+
+always @(posedge ddr3_clk or negedge ddr3_reset_n) 
+  if (!ddr3_reset_n)
+     fifo_depth_ddr3   <= 'd0;
+  else
+     fifo_depth_ddr3   <= next_fifo_depth_ddr3;
+
+assign almost_full_ddr3 = fifo_depth_ddr3 >= READ_DATA_FIFO_SPACE;
+
 async_fifo #(.fifo_data_size(128),
-	         .fifo_ptr_size (9)) i_async_fifo (
+	         .fifo_ptr_size (READ_DATA_FIFO_DEPTH)) i_async_fifo (
   .wr_clk                 (ddr3_clk),
   .rd_clk                 (vga_clk),
   .reset_wr               (~ddr3_reset_n),

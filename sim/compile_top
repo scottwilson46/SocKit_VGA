@@ -1,0 +1,1 @@
+iverilog tb_top.v ddr3_controller_sim.sv csr_access.v ../top/top_no_ddr3.v ../common/*.v ../ddr3_control/*.v ../vga_control/altera_pll_vga_sim.v ../vga_control/vga*

@@ -112,9 +112,7 @@ begin
             ddr3_avl_read_req   = 1'b1;
 
             if (ddr3_avl_ready)
-                if (data_fifo_almost_full)
-                    next_state      = WAIT_FOR_FIFO_TO_EMPTY;
-                else if (transfer_count == MAX_COUNT)
+                if (transfer_count == MAX_COUNT)
                 begin
                   if (~buffer_sel)
                   begin
@@ -142,6 +140,8 @@ begin
                 begin
                     next_ddr3_avl_addr       = ddr3_avl_addr + 'd4;
                     next_transfer_count      = transfer_count + 'd1;
+                    if (data_fifo_almost_full)
+                        next_state = WAIT_FOR_FIFO_TO_EMPTY;
                 end
         end
         WAIT_FOR_FIFO_TO_EMPTY:

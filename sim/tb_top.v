@@ -13,6 +13,11 @@ reg   [7:0] data;
 reg [127:0] rd_data_gen;
 integer i,j;
 
+wire  [7:0] r,g,b;
+reg   [7:0] r_exp, g_exp, b_exp;
+reg   [5:0] op_count;
+reg         Error;
+
 wire         ddr3_avl_ready;
 wire         ddr3_avl_burstbegin;
 wire  [25:0] ddr3_avl_addr;
@@ -52,9 +57,9 @@ top_no_ddr3 i_top (
   .ddr3_clk         (clk),
   .reset_n          (~reset),
 
-  .vga_r            (),
-  .vga_g            (),
-  .vga_b            (),
+  .vga_r            (r),
+  .vga_g            (g),
+  .vga_b            (b),
 
   .test_pat         (1'b0),
   .key_val          (4'd0),
@@ -99,7 +104,7 @@ ddr3_controller_sim #(.DEBUG(1))  i_ddr3_sim (
 initial
 begin
     data = 8'd0;
-    for (i=0;i<1024;i++)
+    for (i=0;i<32768;i++)
     begin
         rd_data_gen = 128'd0;
 	for (j=0; j<16; j++)
@@ -111,6 +116,26 @@ begin
 //	$display("wr %d = %x", i, rd_data_gen);
     end
 end
+
+// check op data:
+always @(posedge clk or posedge reset)
+  if (reset)
+  begin
+    op_count    <= 'd0;
+    Error       <= 1'b0;
+  end
+  else if (i_top.i_vga_control.pixel_valid)
+  begin
+    op_count    <= op_count + 'd1;
+    r_exp       = (op_count * 4);
+    g_exp       = (op_count * 4)+1;
+    b_exp       = (op_count * 4)+2;
+    if (r_exp !== r || g_exp !== g || b_exp !== b)
+    begin
+      $display("Output Error, r(%x, %x), g(%x, %x), b(%x, %x)", r_exp, r, g_exp, g, b_exp, b);
+      Error <= 1'b1;
+    end
+  end
 
 initial
 begin 
