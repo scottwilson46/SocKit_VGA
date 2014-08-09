@@ -16,6 +16,7 @@ module read_from_ddr3 #(parameter IMAGE_WIDTH  = 1280,
   input                    test_rd,
   output reg    [127:0]    test_rd_data,
   output                   rd_finish_clk,
+  output                   test_rd_data_valid,
 
   input                    data_fifo_almost_full,
 
@@ -52,7 +53,7 @@ reg         next_clear_buffer1, clear_buffer1;
 reg         next_buffer_sel, buffer_sel;
 reg         next_rd_finish, rd_finish;
 reg [127:0] next_test_rd_data;
-
+reg         next_test_rd_data_valid;
 
 always @(*)
 begin
@@ -67,14 +68,15 @@ begin
     next_test_rd_data        = test_rd_data;
     next_rd_finish           = 1'b0;
     next_ddr3_avl_size       = ddr3_avl_size;
-
+    next_test_rd_data_valid  = test_rd_data_valid;
     case (state)
         IDLE:
             if (test_rd)
             begin
-                next_state          = START_TEST_READ;
-                next_ddr3_avl_addr  = test_addr[25:0];
-                next_ddr3_avl_size  = 3'b001;
+                next_state              = START_TEST_READ;
+                next_ddr3_avl_addr      = test_addr[25:0];
+                next_ddr3_avl_size      = 3'b001;
+                next_test_rd_data_valid = 1'b1;
             end
             else if (!ddr3_rd_buffer0_empty || !ddr3_rd_buffer1_empty)
             begin
@@ -98,9 +100,10 @@ begin
         WAIT_FOR_DATA:
             if (ddr3_avl_read_data_valid)
             begin
-                next_test_rd_data   = ddr3_avl_read_data;
-                next_rd_finish      = 1'b1;
-                next_state          = IDLE;
+                next_test_rd_data       = ddr3_avl_read_data;
+                next_rd_finish          = 1'b1;
+                next_state              = IDLE;
+                next_test_rd_data_valid = 1'b0;
             end
 
         START_READ:
@@ -183,6 +186,7 @@ always @(posedge ddr3_clk or negedge ddr3_reset_n)
     clear_buffer1         <= 1'b0;
     test_rd_data          <= 128'd0;
     rd_finish             <= 1'b0;
+    test_rd_data_valid    <= 1'b0;
   end
   else
   begin
@@ -195,6 +199,7 @@ always @(posedge ddr3_clk or negedge ddr3_reset_n)
     clear_buffer1         <= next_clear_buffer1;
     test_rd_data          <= next_test_rd_data;
     rd_finish             <= next_rd_finish;
+    test_rd_data_valid    <= next_test_rd_data_valid;
   end
  
 

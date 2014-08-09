@@ -40,6 +40,7 @@ wire [31:0]  test_addr;
 wire [127:0] test_wr_data;
 wire         test_wr;
 wire [31:0]  test_regs_int;
+wire         test_rd_data_valid;
 
 wire [127:0] test_rd_data;
 wire         test_rd;
@@ -88,6 +89,7 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
   .test_rd                (test_rd),
   .test_rd_data           (test_rd_data),
   .rd_finish_clk          (rd_finish),
+  .test_rd_data_valid     (test_rd_data_valid),
 
   .data_fifo_almost_full  (data_fifo_almost_full),
 
@@ -133,7 +135,7 @@ async_fifo #(.fifo_data_size(128),
   .reset_wr               (~ddr3_reset_n),
   .reset_rd               (~vga_reset_n),
 
-  .wr_valid               (ddr3_avl_read_data_valid),
+  .wr_valid               (ddr3_avl_read_data_valid && ~test_rd_data_valid),
   .rd_valid               (vga_rd_valid),
   .wr_data                (ddr3_avl_read_data),
 
