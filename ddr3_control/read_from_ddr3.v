@@ -91,7 +91,7 @@ begin
             ddr3_avl_burstbegin = 1'b1;
             ddr3_avl_read_req   = 1'b1;
 
-            if (!ddr3_avl_ready)
+            if (ddr3_avl_ready)
                 next_state          = WAIT_FOR_DATA;
         end
 
@@ -108,7 +108,7 @@ begin
             ddr3_avl_burstbegin = 1'b1;
             ddr3_avl_read_req   = 1'b1;
 
-            if (!ddr3_avl_ready)
+            if (ddr3_avl_ready)
                 if (data_fifo_almost_full)
                     next_state      = WAIT_FOR_FIFO_TO_EMPTY;
                 else if (transfer_count == MAX_COUNT)
