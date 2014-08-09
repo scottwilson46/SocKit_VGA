@@ -16,7 +16,7 @@ module read_from_ddr3 #(parameter IMAGE_WIDTH  = 1280,
   input                    test_rd,
   output reg    [127:0]    test_rd_data,
   output                   rd_finish_clk,
-  output                   test_rd_data_valid,
+  output reg               test_rd_data_valid,
 
   input                    data_fifo_almost_full,
 
