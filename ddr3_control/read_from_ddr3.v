@@ -74,7 +74,7 @@ begin
             begin
                 next_state          = START_TEST_READ;
                 next_ddr3_avl_addr  = test_addr[25:0];
-                next_ddr3_avl_size  = 3'b100;
+                next_ddr3_avl_size  = 3'b001;
             end
             else if (!ddr3_rd_buffer0_empty || !ddr3_rd_buffer1_empty)
             begin
@@ -83,7 +83,7 @@ begin
                 else if (!ddr3_rd_buffer1_empty && (buffer_sel == 1'b1))
                     next_ddr3_avl_addr       = ddr3_buffer1_offset;
                 next_state          = START_READ;
-                next_ddr3_avl_size  = 3'b001;
+                next_ddr3_avl_size  = 3'b100;
             end
 
         START_TEST_READ:
