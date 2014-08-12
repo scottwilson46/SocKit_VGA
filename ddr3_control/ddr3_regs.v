@@ -27,7 +27,11 @@ module ddr3_regs (
   input                        clear_buffer0,
   input                        clear_buffer1,
   input                        wr_finish,
-  input                        rd_finish
+  input                        rd_finish,
+
+  output reg tmp1,
+  output reg tmp2,
+  output reg test_pat
 );
 
 
@@ -60,6 +64,8 @@ reg         ddr3_wr_state;
 wire        next_ddr3_rd_state;
 reg         ddr3_rd_state;
 
+reg         next_test_pat;
+
 assign ddr3_rd_buffer0_empty = ~ddr3_buffer0_state;
 assign ddr3_rd_buffer1_empty = ~ddr3_buffer1_state;
 
@@ -74,6 +80,7 @@ begin
         next_test_wr_data        = test_wr_data;
         next_test_wr             = 1'b0;
         next_test_rd             = 1'b0;
+        next_test_pat            = test_pat;
         if (csr_write)
 	begin
 	case(csr_addr)
@@ -87,7 +94,11 @@ begin
                 8'd07: next_test_wr_data[63:32]    = csr_wr_data[31:0];
                 8'd08: next_test_wr_data[95:64]    = csr_wr_data[31:0];
                 8'd09: next_test_wr_data[127:96]   = csr_wr_data[31:0];
-                8'd10: begin next_test_wr                = csr_wr_data[0];     next_test_rd = csr_wr_data[1]; end
+                8'd10: begin 
+                       next_test_wr                = csr_wr_data[0];     
+                       next_test_rd                = csr_wr_data[1]; 
+                       next_test_pat               = csr_wr_data[2];
+                       end
                 
 	endcase
 	end
@@ -149,12 +160,29 @@ async_handshake i_async_handshake_set_test_rd (
         .ack_out     (test_rd_ddr3));
 
 assign next_ddr3_buffer0_state = (ddr3_buffer0_wr_ddr3) ? 1'b1 :
-	                             (clear_buffer0)        ? 1'b0 :
-	                             ddr3_buffer0_state;
+                                 (clear_buffer0)        ? 1'b0 :
+	                         ddr3_buffer0_state;
+
+
+always @(posedge clk or negedge reset_n)
+  if (!reset_n)
+  begin
+    tmp1 <= 1'b0;
+  end
+  else 
+  begin
+    tmp1 <= (ddr3_buffer0_wr ? 1'b1 : tmp1);
+  end
+
+always @(posedge ddr3_clk or negedge ddr3_reset_n)
+  if (!ddr3_reset_n)
+    tmp2 <= 1'b0;
+  else
+    tmp2 <= (clear_buffer0 ? 1'b1 : tmp2);
 
 assign next_ddr3_buffer1_state = (ddr3_buffer1_wr_ddr3) ? 1'b1 :
-	                             (clear_buffer1)        ? 1'b0 :
-	                             ddr3_buffer1_state;
+	                         (clear_buffer1)        ? 1'b0 :
+	                         ddr3_buffer1_state;
 
 assign next_ddr3_wr_state      = (test_wr) ? 1'b1 :
                                  (wr_finish) ? 1'b0 :
@@ -163,7 +191,6 @@ assign next_ddr3_wr_state      = (test_wr) ? 1'b1 :
 assign next_ddr3_rd_state      = (test_rd) ? 1'b1 :
                                  (rd_finish) ? 1'b0 :
 			         ddr3_rd_state;
-
 
 always @(posedge clk or negedge reset_n)
   if (!reset_n)
@@ -178,6 +205,7 @@ always @(posedge clk or negedge reset_n)
         test_wr               <= 1'b0;
         test_rd               <= 1'b0;
 	csr_rd_data           <= 32'd0;
+        test_pat              <= 1'b0;
   end
   else begin
     ddr3_buffer0_offset   <= next_ddr3_buffer0_offset;
@@ -190,6 +218,7 @@ always @(posedge clk or negedge reset_n)
     test_wr_data          <= next_test_wr_data;
     test_addr             <= next_test_addr;
     csr_rd_data           <= (csr_read ? next_csr_rd_data : csr_rd_data);
+    test_pat              <= next_test_pat;
   end
 
 always @(posedge ddr3_clk or negedge ddr3_reset_n)

@@ -127,11 +127,7 @@
    internal="top_no_ddr3_0.vga_clk"
    type="conduit"
    dir="end" />
- <interface
-   name="top_no_ddr3_0_test_pat"
-   internal="top_no_ddr3_0.test_pat"
-   type="conduit"
-   dir="end" />
+ <interface name="top_no_ddr3_0_test_pat" internal="top_no_ddr3_0.test_pat" />
  <interface
    name="top_no_ddr3_0_test_regs"
    internal="top_no_ddr3_0.test_regs"
@@ -1014,7 +1010,7 @@
  <connection
    kind="clock"
    version="13.1"
-   start="clk_50.clk"
+   start="clk_0.clk"
    end="top_no_ddr3_0.clk_50" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />

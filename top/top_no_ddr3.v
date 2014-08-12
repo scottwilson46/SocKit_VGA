@@ -9,7 +9,6 @@ module top_no_ddr3 (
   output          [7:0]    vga_g,
   output          [7:0]    vga_b,
 
-  input                    test_pat,
   input           [3:0]    key_val,
 
   input                    csr_read,
@@ -45,10 +44,14 @@ reg reset_50_n_sync0;
 reg reset_50_n_sync1;
 reg reset_50_n_sync2;
 
+reg test;
+wire [31:0] test_regs_int;
 
 wire [127:0] ddr_fifo_rd_data;
 wire         vga_rd_valid;
 wire         data_fifo_empty;
+
+assign test_regs = {test_regs_int[31:1], test};
 
 always @(posedge clk or negedge reset_n)
   if (!reset_n)
@@ -87,6 +90,12 @@ altera_pll_vga i_pll (
   .outclk_0                 (vga_clk_int),
   .locked                   (pll_locked));
 
+always @(posedge vga_clk_int or negedge pll_locked)
+  if (!pll_locked)
+    test <= 1'b0;
+  else 
+    test <= 1'b1;
+
 assign vga_clk = vga_clk_int;
 
 ddr3_top i_ddr3_top (
@@ -114,7 +123,8 @@ ddr3_top i_ddr3_top (
   .data_fifo_empty          (data_fifo_empty),
   .data_fifo_rd_data        (ddr_fifo_rd_data),
   .vga_rd_valid             (vga_rd_valid),
-  .test_regs                (test_regs),
+  .test_regs                (test_regs_int),
+  .test_pat                 (test_pat),
   .key_val                  (key_val));
 
 vga_control i_vga_control (

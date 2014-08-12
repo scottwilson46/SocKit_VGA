@@ -189,12 +189,6 @@ set_interface_property vga_clk associatedReset ""
 set_interface_property vga_clk ENABLED true
 add_interface_port vga_clk vga_clk export Output 1
 
-add_interface test_pat conduit start
-set_interface_property test_pat associatedClock ""
-set_interface_property test_pat associatedReset ""
-set_interface_property test_pat ENABLED true
-add_interface_port test_pat test_pat export Input 1
-
 add_interface test_regs conduit end
 set_interface_property test_regs associatedClock ""
 set_interface_property test_regs associatedReset ""

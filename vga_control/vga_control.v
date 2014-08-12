@@ -38,7 +38,7 @@ begin
 	next_vga_sync_reset = vga_sync_reset;
 	case(vga_state)
 	  IDLE:
-	    if (~data_fifo_empty)
+	    if (~data_fifo_empty | test_pat)
 	    begin
 	    	next_vga_state = STARTED;
 	    	next_vga_sync_reset = 1'b0;

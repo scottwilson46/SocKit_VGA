@@ -27,7 +27,9 @@ module read_from_ddr3 #(parameter IMAGE_WIDTH  = 1280,
   output reg     [25:0]    ddr3_avl_addr,
 
   input                    ddr3_avl_read_data_valid,
-  input         [127:0]    ddr3_avl_read_data
+  input         [127:0]    ddr3_avl_read_data,
+
+  output reg               in_start_read
 
 
 );
@@ -55,6 +57,9 @@ reg         next_rd_finish, rd_finish;
 reg [127:0] next_test_rd_data;
 reg         next_test_rd_data_valid;
 
+reg         next_in_start_read;
+
+
 always @(*)
 begin
     next_state               = state;
@@ -69,6 +74,7 @@ begin
     next_rd_finish           = 1'b0;
     next_ddr3_avl_size       = ddr3_avl_size;
     next_test_rd_data_valid  = test_rd_data_valid;
+    next_in_start_read       = in_start_read;
     case (state)
         IDLE:
             if (test_rd)
@@ -110,6 +116,7 @@ begin
         begin
             ddr3_avl_burstbegin = 1'b1;
             ddr3_avl_read_req   = 1'b1;
+            next_in_start_read  = 1'b1;
 
             if (ddr3_avl_ready)
                 if (transfer_count == MAX_COUNT)
@@ -187,6 +194,7 @@ always @(posedge ddr3_clk or negedge ddr3_reset_n)
     test_rd_data          <= 128'd0;
     rd_finish             <= 1'b0;
     test_rd_data_valid    <= 1'b0;
+    in_start_read         <= 1'b0;
   end
   else
   begin
@@ -200,6 +208,7 @@ always @(posedge ddr3_clk or negedge ddr3_reset_n)
     test_rd_data          <= next_test_rd_data;
     rd_finish             <= next_rd_finish;
     test_rd_data_valid    <= next_test_rd_data_valid;
+    in_start_read         <= next_in_start_read;
   end
  
 

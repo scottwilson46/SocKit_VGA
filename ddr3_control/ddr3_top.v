@@ -27,7 +27,8 @@ module ddr3_top #(parameter IMAGE_WIDTH = 1280,
   input                    vga_rd_valid,
 
   output         [31:0]    test_regs,
-  input           [3:0]    key_val
+  input           [3:0]    key_val,
+  output                   test_pat
 
 );
 
@@ -35,8 +36,7 @@ parameter READ_DATA_FIFO_DEPTH = 9;
 parameter READ_DATA_FIFO_SIZE  = (1<<READ_DATA_FIFO_DEPTH);
 parameter READ_DATA_FIFO_SPACE = READ_DATA_FIFO_SIZE-100;
 
-wire [31:0] tmp1 = READ_DATA_FIFO_SIZE;
-wire [31:0] tmp2 = READ_DATA_FIFO_SPACE;
+wire tmp1, tmp2;
 
 wire [READ_DATA_FIFO_DEPTH:0] next_fifo_depth_ddr3;
 reg  [READ_DATA_FIFO_DEPTH:0] fifo_depth_ddr3;
@@ -66,10 +66,12 @@ wire        ddr3_rd_buffer0_empty;
 wire        ddr3_rd_buffer1_empty;
 wire        ddr3_fifo_almost_full;
 
+wire        in_start_read;
+
 wire  [3:0] debug_out_wr;
 reg test;
 
-assign test_regs = {28'd0, debug_out_wr};
+assign test_regs = {28'd0, tmp2, tmp1, data_fifo_empty, debug_out_wr[0]};
 
 always @(posedge ddr3_clk or negedge ddr3_reset_n)
   if (!ddr3_reset_n)
@@ -111,7 +113,9 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
   .ddr3_avl_addr          (ddr3_avl_rd_addr),
 
   .ddr3_avl_read_data_valid (ddr3_avl_read_data_valid),
-  .ddr3_avl_read_data     (ddr3_avl_read_data)
+  .ddr3_avl_read_data     (ddr3_avl_read_data),
+  
+  .in_start_read          (in_start_read)
 
 );
 
@@ -201,7 +205,11 @@ ddr3_regs i_ddr3_regs (
   .clear_buffer0          (clear_buffer0),
   .clear_buffer1          (clear_buffer1),
   .wr_finish              (wr_finish),
-  .rd_finish              (rd_finish));
+  .rd_finish              (rd_finish),
+  
+  .tmp1                   (tmp1),
+  .tmp2                   (tmp2),
+  .test_pat               (test_pat));
 
 endmodule
 

@@ -65,7 +65,7 @@ module top_soc (
 
 wire hps_fpga_reset_n;
 wire [31:0] test_regs;
-assign LED = {1'b0, init_done, cal_success, cal_fail}; //test_regs[3:0];
+assign LED = test_regs[3:0];
 
 top_qsys i_qsys (
 
