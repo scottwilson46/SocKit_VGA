@@ -1,4 +1,4 @@
-module ddr3_top #(parameter IMAGE_WIDTH = 1280,
+module ddr3_top #(parameter IMAGE_WIDTH  = 1280,
                   parameter IMAGE_HEIGHT = 1024) (
   input                    ddr3_clk,
   input                    clk,
@@ -71,6 +71,13 @@ wire        in_start_read;
 wire  [3:0] debug_out_wr;
 reg test;
 
+wire        next_start_write;
+reg         start_write;
+wire  [7:0] next_write_addr;
+reg   [7:0] write_addr;
+wire  [7:0] rd_addr_from_regs;
+wire [31:0] rd_data_to_regs;
+
 assign test_regs = {28'd0, tmp2, tmp1, data_fifo_empty, debug_out_wr[0]};
 
 always @(posedge ddr3_clk or negedge ddr3_reset_n)
@@ -104,7 +111,7 @@ read_from_ddr3 #(.IMAGE_WIDTH (IMAGE_WIDTH),
   .rd_finish_clk          (rd_finish),
   .test_rd_data_valid     (test_rd_data_valid),
 
-  .data_fifo_almost_full  (almost_full_ddr3),
+  .data_fifo_almost_full  (data_fifo_almost_full),
 
   .ddr3_avl_ready         (ddr3_avl_ready),
   .ddr3_avl_burstbegin    (ddr3_avl_rd_burstbegin),
@@ -143,25 +150,9 @@ assign ddr3_avl_burstbegin = ddr3_avl_read_req ? ddr3_avl_rd_burstbegin : ddr3_a
 assign ddr3_avl_size       = ddr3_avl_read_req ? ddr3_avl_rd_size       : ddr3_avl_wr_size;
 assign ddr3_avl_addr       = ddr3_avl_read_req ? ddr3_avl_rd_addr       : ddr3_avl_wr_addr;
 
-assign next_fifo_depth_ddr3 = ((ddr3_avl_read_req && ddr3_avl_ready && ~test_rd_data_valid) &&
-                              (vga_rd_valid)) ?
-                                        (fifo_depth_ddr3 + 'd3) :
-                              (ddr3_avl_read_req && ddr3_avl_ready && ~test_rd_data_valid) ? 
-                                        (fifo_depth_ddr3 + 'd4) :
-                              (vga_rd_valid) ?
-                                        (fifo_depth_ddr3 - 'd1) :
-                              fifo_depth_ddr3;
-
-always @(posedge ddr3_clk or negedge ddr3_reset_n) 
-  if (!ddr3_reset_n)
-     fifo_depth_ddr3   <= 'd0;
-  else
-     fifo_depth_ddr3   <= next_fifo_depth_ddr3;
-
-assign almost_full_ddr3 = fifo_depth_ddr3 >= READ_DATA_FIFO_SPACE;
-
-async_fifo #(.fifo_data_size(128),
-	         .fifo_ptr_size (READ_DATA_FIFO_DEPTH)) i_async_fifo (
+async_fifo #(.fifo_data_size    (128),
+	     .fifo_ptr_size     (READ_DATA_FIFO_DEPTH),
+             .almost_full_space (300)) i_async_fifo (
   .wr_clk                 (ddr3_clk),
   .rd_clk                 (vga_clk),
   .reset_wr               (~ddr3_reset_n),
@@ -175,6 +166,35 @@ async_fifo #(.fifo_data_size(128),
   .fifo_empty             (data_fifo_empty),
   .fifo_almost_full       (data_fifo_almost_full),
   .rd_data                (data_fifo_rd_data));
+
+
+assign wr_valid = (ddr3_avl_read_data_valid && ~test_rd_data_valid) && start_write;
+assign next_start_write = start_write & ~(write_addr == 'd100);
+assign next_write_addr  = wr_valid ? write_addr + 'd1 : 
+                          write_addr;
+
+async_fifo_memory #(.fifo_data_size(32), .fifo_ptr_size(8)) i_mem (
+  .wr_clk      (ddr3_clk),
+  .rd_clk      (clk),
+  .wr_din      (data_fifo_rd_data[31:0]),
+  .wr_addr     (write_addr),
+  .wr_en       (wr_valid),
+  .rd_addr     (rd_addr_from_regs),
+  .wr_data     (),
+  .rd_data     (rd_data_to_regs));
+
+always @(posedge ddr3_clk or negedge reset_n)
+  if (!reset_n)
+  begin
+    start_write     <= 1'b1;
+    write_addr      <= 'd0;
+  end
+  else 
+  begin
+    start_write     <= next_start_write;
+    write_addr      <= next_write_addr;
+  end
+
 
 ddr3_regs i_ddr3_regs (
   .clk                    (clk),
@@ -206,6 +226,11 @@ ddr3_regs i_ddr3_regs (
   .clear_buffer1          (clear_buffer1),
   .wr_finish              (wr_finish),
   .rd_finish              (rd_finish),
+
+  .write_addr_dbg         (write_addr),
+  .rd_data_dbg            (rd_data_to_regs),
+
+  .rd_addr_dbg            (rd_addr_from_regs),
   
   .tmp1                   (tmp1),
   .tmp2                   (tmp2),

@@ -2,7 +2,6 @@ module top_soc (
 
   input                    clk_top1,     // 156.25MHz
   input                    clk_bot1,     // 100MHz
-  input                    clk_50m_fpga,
 
   inout                    hps_0_hps_io_hps_io_gpio_inst_GPIO09,
   inout                    hps_0_hps_io_hps_io_gpio_inst_GPIO35,
@@ -70,9 +69,7 @@ assign LED = test_regs[3:0];
 top_qsys i_qsys (
 
   .clk_clk                                       (clk_bot1),
-  .clk_50_clk                                    (clk_50m_fpga),
   .reset_reset_n                                 (hps_fpga_reset_n),
-  .reset_50_reset_n                              (hps_fpga_reset_n),
 
   .hps_0_hps_io_hps_io_gpio_inst_GPIO09          (hps_0_hps_io_hps_io_gpio_inst_GPIO09),
   .hps_0_hps_io_hps_io_gpio_inst_GPIO35          (hps_0_hps_io_hps_io_gpio_inst_GPIO35),

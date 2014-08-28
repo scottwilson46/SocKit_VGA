@@ -50,8 +50,9 @@ wire [31:0] test_regs_int;
 wire [127:0] ddr_fifo_rd_data;
 wire         vga_rd_valid;
 wire         data_fifo_empty;
+wire         vga_test_out;
 
-assign test_regs = {test_regs_int[31:1], test};
+assign test_regs = {test_regs_int[31:1], vga_test_out};
 
 always @(posedge clk or negedge reset_n)
   if (!reset_n)
@@ -127,6 +128,7 @@ ddr3_top i_ddr3_top (
   .test_pat                 (test_pat),
   .key_val                  (key_val));
 
+
 vga_control i_vga_control (
   .vga_clk                  (vga_clk_int),
   .vga_reset_n              (pll_locked),
@@ -144,6 +146,7 @@ vga_control i_vga_control (
 
   .data_fifo_empty          (data_fifo_empty),
   .ddr_fifo_rd_data         (ddr_fifo_rd_data),
-  .vga_rd_valid             (vga_rd_valid));
+  .vga_rd_valid             (vga_rd_valid),
+  .test_out                 (vga_test_out));
 
 endmodule

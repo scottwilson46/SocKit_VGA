@@ -22,7 +22,7 @@ parameter  OTHER_CYCLES         = 4'd3;
 reg [3:0] next_wr_state, wr_state;
 reg [3:0] next_rd_state, rd_state;
 
-reg [127:0] ram [0:32768];
+reg [127:0] ram [0:65536*8];
 
 reg [25:0] next_wr_addr, wr_addr;
 reg [2:0]  next_burst_size, burst_size;

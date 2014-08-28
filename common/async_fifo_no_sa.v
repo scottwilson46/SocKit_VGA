@@ -1,4 +1,6 @@
-module async_fifo_no_sa #(parameter fifo_data_size = 8, fifo_ptr_size = 8, almost_full_space = 10)
+module async_fifo_no_sa #(parameter fifo_data_size = 8, 
+                          parameter fifo_ptr_size = 8, 
+                          parameter almost_full_space = 10)
 (
   // Clocks and resets:
   input                           wr_clk,

@@ -15,7 +15,9 @@ module vga_control (
 
   input               data_fifo_empty,
   input       [127:0] ddr_fifo_rd_data,
-  output              vga_rd_valid
+  output              vga_rd_valid,
+
+  output reg          test_out
 
 );
 
@@ -55,7 +57,7 @@ assign vga_data_shifted   = (ddr_fifo_rd_data >> (vga_count * 32));
 
 assign vga_r              = (test_pat) ? vga_r_sync : vga_data_shifted[7:0];
 assign vga_g              = (test_pat) ? vga_g_sync : vga_data_shifted[15:8];
-assign vga_b     	      = (test_pat) ? vga_b_sync : vga_data_shifted[23:16];
+assign vga_b     	  = (test_pat) ? vga_b_sync : vga_data_shifted[23:16];
 
 always @(posedge vga_clk or negedge vga_reset_n)
   if (!vga_reset_n)
@@ -81,5 +83,14 @@ vga_sync i_vga_sync (
   .b             (vga_b_sync),
 
   .pixel_valid   (pixel_valid)); 
+
+always @(posedge vga_clk or posedge vga_sync_reset)
+  if (vga_sync_reset)
+    test_out     <= 1'b0;
+  else if (vga_r != 'd255)
+    test_out     <= 1'b1;
+
+assign vga_sync_n = 1'b0;
+assign vga_blank_n = 1'b1;
 
 endmodule

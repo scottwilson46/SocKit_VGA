@@ -40,7 +40,7 @@ parameter START_TEST_READ        = 3'd2;
 parameter WAIT_FOR_DATA          = 3'd3;
 parameter WAIT_FOR_FIFO_TO_EMPTY = 3'd4;
 
-parameter MAX_COUNT = (((IMAGE_WIDTH*IMAGE_HEIGHT)>>2)-1);
+parameter MAX_COUNT = (((IMAGE_WIDTH*IMAGE_HEIGHT)>>4)-1);
 
 
 reg   [3:0] next_state, state; 
@@ -142,6 +142,7 @@ begin
                     end
                   end
                   next_state      = IDLE;
+                  next_transfer_count = 'd0;
                 end 
                 else
                 begin

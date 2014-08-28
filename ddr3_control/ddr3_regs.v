@@ -29,6 +29,11 @@ module ddr3_regs (
   input                        wr_finish,
   input                        rd_finish,
 
+  input       [7:0]            write_addr_dbg,
+  input      [31:0]            rd_data_dbg,
+
+  output reg  [7:0]            rd_addr_dbg,
+
   output reg tmp1,
   output reg tmp2,
   output reg test_pat
@@ -66,6 +71,8 @@ reg         ddr3_rd_state;
 
 reg         next_test_pat;
 
+reg  [7:0]  next_rd_addr_dbg;
+
 assign ddr3_rd_buffer0_empty = ~ddr3_buffer0_state;
 assign ddr3_rd_buffer1_empty = ~ddr3_buffer1_state;
 
@@ -81,6 +88,7 @@ begin
         next_test_wr             = 1'b0;
         next_test_rd             = 1'b0;
         next_test_pat            = test_pat;
+        next_rd_addr_dbg         = 8'd0;
         if (csr_write)
 	begin
 	case(csr_addr)
@@ -99,6 +107,7 @@ begin
                        next_test_rd                = csr_wr_data[1]; 
                        next_test_pat               = csr_wr_data[2];
                        end
+                8'd16: next_rd_addr_dbg            = csr_wr_data[7:0];
                 
 	endcase
 	end
@@ -124,6 +133,8 @@ begin
       8'd13: next_csr_rd_data = test_rd_data[95:64];
       8'd14: next_csr_rd_data = test_rd_data[127:96];
       8'd15: next_csr_rd_data = 32'hb00bb00b;
+      8'd17: next_csr_rd_data = {16'd0, write_addr_dbg, rd_addr_dbg};
+      8'd18: next_csr_rd_data = rd_data_dbg;
     endcase
 end
 
@@ -206,6 +217,7 @@ always @(posedge clk or negedge reset_n)
         test_rd               <= 1'b0;
 	csr_rd_data           <= 32'd0;
         test_pat              <= 1'b0;
+        rd_addr_dbg           <= 8'd0;
   end
   else begin
     ddr3_buffer0_offset   <= next_ddr3_buffer0_offset;
@@ -219,6 +231,7 @@ always @(posedge clk or negedge reset_n)
     test_addr             <= next_test_addr;
     csr_rd_data           <= (csr_read ? next_csr_rd_data : csr_rd_data);
     test_pat              <= next_test_pat;
+    rd_addr_dbg           <= next_rd_addr_dbg;
   end
 
 always @(posedge ddr3_clk or negedge ddr3_reset_n)

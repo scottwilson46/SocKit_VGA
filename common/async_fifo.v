@@ -1,4 +1,6 @@
-module async_fifo #(parameter fifo_data_size = 8, fifo_ptr_size = 8)
+module async_fifo #(parameter fifo_data_size = 8, 
+                    parameter fifo_ptr_size = 8,
+                    parameter almost_full_space = 10)
 (
   // Clocks and resets:
   input                           wr_clk,
@@ -24,8 +26,9 @@ wire                      rd_valid_int;
 reg                       rd_valid_reg;
 wire                      fifo_empty_int;
 
-async_fifo_no_sa #(.fifo_data_size (fifo_data_size),
-                   .fifo_ptr_size  (fifo_ptr_size)) i_async_fifo_no_sa (
+async_fifo_no_sa #(.fifo_data_size     (fifo_data_size),
+                   .fifo_ptr_size      (fifo_ptr_size),
+                   .almost_full_space  (almost_full_space)) i_async_fifo_no_sa (
   .wr_clk           (wr_clk),
   .rd_clk           (rd_clk),
   .reset_wr         (reset_wr),
