@@ -1,4 +1,6 @@
-/apps/quartus/sopc_builder/bin/ip-generate --output-directory=top_qsys --file-set=QUARTUS_SYNTH --component-file=top_qsys.qsys --report-file=qip
+export QUARTUS_ROOT=/home/scott/altera/13.1/quartus/
+
+$QUARTUS_ROOT/sopc_builder/bin/ip-generate --output-directory=top_qsys --file-set=QUARTUS_SYNTH --component-file=top_qsys.qsys --report-file=qip
 quartus_map top_soc
 quartus_sh -t top_qsys/submodules/top_qsys_mem_if_ddr3_emif_0_p0_pin_assignments.tcl top_soc
 quartus_fit top_soc

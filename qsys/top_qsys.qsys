@@ -20,14 +20,6 @@
          type = "int";
       }
    }
-   element clk_50
-   {
-      datum _sortIndex
-      {
-         value = "2";
-         type = "int";
-      }
-   }
    element hps_0.f2h_axi_slave
    {
       datum baseAddress
@@ -40,7 +32,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "2";
          type = "int";
       }
    }
@@ -56,7 +48,7 @@
    {
       datum _sortIndex
       {
-         value = "4";
+         value = "3";
          type = "int";
       }
    }
@@ -149,8 +141,6 @@
    type="conduit"
    dir="end" />
  <interface name="oct" internal="mem_if_ddr3_emif_0.oct" type="conduit" dir="end" />
- <interface name="clk_50" internal="clk_50.clk_in" type="clock" dir="end" />
- <interface name="reset_50" internal="clk_50.clk_in_reset" type="reset" dir="end" />
  <interface
    name="top_no_ddr3_0_key_val"
    internal="top_no_ddr3_0.key_val"
@@ -937,12 +927,6 @@
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_CLK_50_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DDR3_CLK_CLOCK_RATE" value="150000000" />
- </module>
- <module kind="clock_source" version="13.1" enabled="1" name="clk_50">
-  <parameter name="clockFrequency" value="50000000" />
-  <parameter name="clockFrequencyKnown" value="true" />
-  <parameter name="inputClockFrequency" value="0" />
-  <parameter name="resetSynchronousEdges" value="NONE" />
  </module>
  <connection
    kind="clock"

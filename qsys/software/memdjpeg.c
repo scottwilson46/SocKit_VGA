@@ -201,6 +201,11 @@ int main (int argc, char *argv[]) {
             first = 0; 
         }
 
+        for (i=0; i<100; i++) {
+          syslog(LOG_INFO, "Data at loc %d = %x", i, ddr3_mem[i]);
+        }
+
+
 	syslog(LOG_INFO, "Proc: Done reading scanlines");
 
         regs = (uint32_t *) (lw_map + 0);
